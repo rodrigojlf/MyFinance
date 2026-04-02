@@ -23,16 +23,27 @@ class AppCoordinator: Coordinator {
         let viewController = SplashViewController(viewModel: viewModel)
         
         viewModel.onFinishSplash = { [weak self] in
-            self?.showWelcomeScreen()
+            self?.showLoginScreen()
         }
         
         navigationController.setViewControllers([viewController], animated: false)
     }
     
-    private func showWelcomeScreen() {
-        let welcomeVC = UIViewController()
-        welcomeVC.view.backgroundColor = .appMagenta
+    private func showLoginScreen() {
+        let viewModel = LoginViewModel()
+        let viewController = LoginViewController(viewModel: viewModel)
         
-        navigationController.setViewControllers([welcomeVC], animated: true)
+        // Quando o login der sucesso, navegar para a Home
+        viewModel.onLoginSuccess = { [weak self] in
+            self?.showHomeScreen()
+        }
+        
+        navigationController.setViewControllers([viewController], animated: true)
+    }
+    
+    private func showHomeScreen() {
+        let homeVC = UIViewController()
+        homeVC.view.backgroundColor = .gray200
+        navigationController.setViewControllers([homeVC], animated: true)
     }
 }

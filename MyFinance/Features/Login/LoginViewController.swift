@@ -1,5 +1,5 @@
 //
-//  SplashViewController.swift
+//  LoginViewController.swift
 //  MyFinance
 //
 //  Created by Rodrigo Lima on 01/04/26.
@@ -7,12 +7,12 @@
 
 import UIKit
 
-final class SplashViewController: UIViewController {
+final class LoginViewController: UIViewController {
     
-    private let viewModel: SplashViewModel
-    private let screen: SplashScreen = SplashScreen()
+    private let viewModel: LoginViewModel
+    private let screen = LoginScreen()
     
-    init(viewModel: SplashViewModel) {
+    init(viewModel: LoginViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -27,8 +27,12 @@ final class SplashViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        viewModel.startSetup()
+        screen.delegate(delegate: self)
     }
-    
-    
+}
+
+extension LoginViewController: LoginScreenProtocol {
+    func tappedLoginButton() {
+        viewModel.performLogin()
+    }
 }

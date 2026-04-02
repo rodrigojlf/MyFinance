@@ -21,7 +21,7 @@ class SplashScreen: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setupUI()
+        setupView()
     }
     
     required init?(coder: NSCoder) {
@@ -29,7 +29,7 @@ class SplashScreen: UIView {
     }
     
     
-    private func setupUI() {
+    private func setupView() {
         backgroundColor = .gray700
         addSubview(logoImageView)
         setupConstraints()
