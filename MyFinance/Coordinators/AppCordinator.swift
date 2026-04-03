@@ -33,7 +33,6 @@ class AppCoordinator: Coordinator {
         let viewModel = LoginViewModel()
         let viewController = LoginViewController(viewModel: viewModel)
         
-        // Quando o login der sucesso, navegar para a Home
         viewModel.onLoginSuccess = { [weak self] in
             self?.showHomeScreen()
         }
@@ -42,8 +41,29 @@ class AppCoordinator: Coordinator {
     }
     
     private func showHomeScreen() {
-        let homeVC = UIViewController()
-        homeVC.view.backgroundColor = .gray200
-        navigationController.setViewControllers([homeVC], animated: true)
+        let viewModel = HomeViewModel()
+        let viewController = HomeViewController(viewModel: viewModel)
+        
+        viewModel.onAddTransactionRequested = { [weak self] in self?.showAddTransaction() }
+        viewModel.onSettingsRequested = { [weak self] in self?.showBudgetSettings() } // NOVO
+        
+        navigationController.setViewControllers([viewController], animated: true)
+    }
+    
+    private func showBudgetSettings() {
+        let viewModel = BudgetSettingsViewModel()
+        let viewController = BudgetSettingsViewController(viewModel: viewModel)
+        
+        viewModel.onBackRequested = { [weak self] in
+            self?.navigationController.popViewController(animated: true)
+        }
+        
+        navigationController.pushViewController(viewController, animated: true)
+    }
+    
+    private func showAddTransaction() {
+        let viewModel = AddTransactionViewModel()
+        let viewController = AddTransactionViewController(viewModel: viewModel)
+        navigationController.present(viewController, animated: true)
     }
 }

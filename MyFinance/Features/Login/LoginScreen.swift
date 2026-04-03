@@ -19,6 +19,8 @@ final class LoginScreen: UIView {
         self.delegate = delegate
     }
     
+    private var hidePassword: Bool = false
+    
     private lazy var headerImageView: UIImageView = {
         let image = UIImageView()
         image.translatesAutoresizingMaskIntoConstraints = false
@@ -26,7 +28,6 @@ final class LoginScreen: UIView {
         image.contentMode = .scaleAspectFill
         image.clipsToBounds = true
         image.layer.cornerRadius = 12
-        image.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner, .layerMaxXMinYCorner, .layerMinXMinYCorner]
         return image
     }()
     
@@ -51,7 +52,31 @@ final class LoginScreen: UIView {
     
     private lazy var nameInput = CustomTextField(placeholder: "Nome")
     private lazy var emailInput = CustomTextField(placeholder: "E-mail")
-    private lazy var passwordInput = CustomTextField(placeholder: "Senha", isPassword: true)
+    private lazy var passwordInput = CustomTextField(placeholder: "Senha", isPassword: hidePassword)
+    
+    private lazy var hidePasswordButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(UIImage(named: "eye-closed"), for: .normal)
+        button.tintColor = UIColor.systemGray
+        button.currentImage?.withRenderingMode(.alwaysTemplate)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(toggleHidePassword), for: .touchUpInside)
+        return button
+    }()
+    
+    @objc private func toggleHidePassword() {
+        hidePassword.toggle()
+        passwordInput.isSecureTextEntry = hidePassword
+        let iconName = hidePassword ? "eye-closed" : "eye"
+        hidePasswordButton.setImage(UIImage(named: iconName), for: .normal)
+    }
+    
+    private lazy var dividerView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.gray300
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
         
     lazy var loginButton: PrimaryButton = {
         let button = PrimaryButton(title: "Entrar")
@@ -64,7 +89,7 @@ final class LoginScreen: UIView {
     }
     
     private lazy var formStackView: UIStackView = {
-        let stack = UIStackView(arrangedSubviews: [nameInput, emailInput, passwordInput])
+        let stack = UIStackView()
         stack.translatesAutoresizingMaskIntoConstraints = false
         stack.axis = .vertical
         stack.spacing = 16
@@ -87,7 +112,12 @@ final class LoginScreen: UIView {
         addSubview(titleLabel)
         addSubview(subtitleLabel)
         addSubview(formStackView)
+        addSubview(dividerView)
         addSubview(loginButton)
+        formStackView.addArrangedSubview(nameInput)
+        formStackView.addArrangedSubview(emailInput)
+        formStackView.addArrangedSubview(passwordInput)
+        passwordInput.addSubview(hidePasswordButton)
         
         setupConstraints()
     }
@@ -111,9 +141,24 @@ final class LoginScreen: UIView {
             formStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24),
             formStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -24),
             
+            hidePasswordButton.centerYAnchor.constraint(equalTo: passwordInput.centerYAnchor),
+            hidePasswordButton.trailingAnchor.constraint(equalTo: passwordInput.trailingAnchor, constant: -16),
+            hidePasswordButton.widthAnchor.constraint(equalToConstant: 30),
+            hidePasswordButton.heightAnchor.constraint(equalToConstant: 30),
+            
             loginButton.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -24),
             loginButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24),
-            loginButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -24)
+            loginButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -24),
+            
+            dividerView.widthAnchor.constraint(equalTo: loginButton.widthAnchor),
+            dividerView.heightAnchor.constraint(equalToConstant: 1),
+            dividerView.bottomAnchor.constraint(equalTo: loginButton.topAnchor, constant: -28),
+            dividerView.centerXAnchor.constraint(equalTo: centerXAnchor),
         ])
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
+        self.endEditing(true)
     }
 }

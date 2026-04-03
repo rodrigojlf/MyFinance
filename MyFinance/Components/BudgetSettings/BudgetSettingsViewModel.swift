@@ -1,0 +1,42 @@
+//
+//  BudgetSettingsViewModel.swift
+//  MyFinance
+//
+//  Created by Rodrigo Lima on 02/04/26.
+//
+
+import Foundation
+
+final class BudgetSettingsViewModel {
+    var onDataUpdated: (() -> Void)?
+    var onBackRequested: (() -> Void)?
+    
+    private(set) var budgets: [Budget] = []
+    
+    func loadData() {
+        budgets = [
+            Budget(id: "1", monthYear: "Junho 2025", amount: 4500.00),
+            Budget(id: "2", monthYear: "Maio 2025", amount: 4200.00),
+            Budget(id: "3", monthYear: "Abril 2025", amount: 4500.00)
+        ]
+        onDataUpdated?()
+    }
+    
+    func addBudget(monthYear: String?, amount: String?) {
+        guard let month = monthYear, !month.isEmpty,
+              let amountStr = amount, let value = Double(amountStr.replacingOccurrences(of: ",", with: ".")) else { return }
+        
+        let newBudget = Budget(id: UUID().uuidString, monthYear: month, amount: value)
+        budgets.insert(newBudget, at: 0)
+        onDataUpdated?()
+    }
+    
+    func removeBudget(at index: Int) {
+        budgets.remove(at: index)
+        onDataUpdated?()
+    }
+    
+    func goBack() {
+        onBackRequested?()
+    }
+}

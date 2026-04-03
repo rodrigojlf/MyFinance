@@ -39,7 +39,7 @@ class SplashScreen: UIView {
         NSLayoutConstraint.activate([
             logoImageView.centerXAnchor.constraint(equalTo: centerXAnchor),
             logoImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            logoImageView.widthAnchor.constraint(equalToConstant: 120), // Ajuste conforme o tamanho real da sua logo
+            logoImageView.widthAnchor.constraint(equalToConstant: 120),
             logoImageView.heightAnchor.constraint(equalToConstant: 120)
         ])
     }
