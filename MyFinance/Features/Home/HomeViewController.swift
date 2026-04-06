@@ -10,7 +10,7 @@ import UIKit
 final class HomeViewController: UIViewController {
     
     private let viewModel: HomeViewModel
-    private let customView = HomeScreen()
+    private let screen = HomeScreen()
     
     init(viewModel: HomeViewModel) {
         self.viewModel = viewModel
@@ -22,7 +22,7 @@ final class HomeViewController: UIViewController {
     }
     
     override func loadView() {
-        self.view = customView
+        self.view = screen
     }
     
     override func viewDidLoad() {
@@ -35,15 +35,15 @@ final class HomeViewController: UIViewController {
     }
     
     private func setupTableView() {
-        customView.tableView.delegate = self
-        customView.tableView.dataSource = self
+        screen.tableView.delegate = self
+        screen.tableView.dataSource = self
     }
     
     private func setupBindings() {
         viewModel.onDataUpdated = { [weak self] in
             guard let self = self else { return }
             
-            self.customView.setupHeaderData(
+            self.screen.setupHeaderData(
                 name: self.viewModel.userName,
                 amount: self.viewModel.availableAmount,
                 used: self.viewModel.usedAmount,
@@ -51,13 +51,13 @@ final class HomeViewController: UIViewController {
                 progress: self.viewModel.budgetProgress
             )
             
-            self.customView.tableView.reloadData()
+            self.screen.tableView.reloadData()
         }
     }
     
     private func setupActions() {
-        customView.fabButton.addTarget(self, action: #selector(fabTapped), for: .touchUpInside)
-        customView.budgetCard.onSettingsTapped = { [weak self] in self?.viewModel.didTapSettings() }
+        screen.fabButton.addTarget(self, action: #selector(fabTapped), for: .touchUpInside)
+        screen.budgetCard.onSettingsTapped = { [weak self] in self?.viewModel.didTapSettings() }
     }
     
     @objc private func fabTapped() {

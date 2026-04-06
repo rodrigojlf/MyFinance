@@ -10,8 +10,6 @@ import Foundation
 struct User {
     let name: String
     var photoUrl: String
-    var accountLimit: Double
-    var transactions: [Transaction]
-    var amountSpent: Double { transactions.reduce(0) { $0 + $1.amount } }
-    var accountBalance: Double { accountLimit - amountSpent }
+    var budgets: [Budget]
 }
+

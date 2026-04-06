@@ -96,7 +96,7 @@ final class BudgetCell: UITableViewCell {
         formatter.currencySymbol = "R$ "
         formatter.locale = Locale(identifier: "pt_BR")
         
-        if let formatted = formatter.string(from: NSNumber(value: budget.amount)) {
+        if let formatted = formatter.string(from: NSNumber(value: budget.limitAmount)) {
             amountLabel.text = formatted
         }
     }

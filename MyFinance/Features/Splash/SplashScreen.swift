@@ -10,7 +10,7 @@ import UIKit
 class SplashScreen: UIView {
     
     
-    private lazy var logoImageView: UIImageView = {
+    lazy var logoImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.image = UIImage(named: "logo")
@@ -42,5 +42,15 @@ class SplashScreen: UIView {
             logoImageView.widthAnchor.constraint(equalToConstant: 120),
             logoImageView.heightAnchor.constraint(equalToConstant: 120)
         ])
+    }
+    
+    func startLogoAnimation() {
+        UIView.animate(withDuration: 1.0, delay: 0, options: .curveEaseInOut, animations: {
+            self.logoImageView.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
+        }, completion: { _ in
+            UIView.animate(withDuration: 1.0, delay: 0, options: .curveEaseInOut, animations: {
+                self.logoImageView.transform = .identity
+            }, completion: nil)
+        })
     }
 }
