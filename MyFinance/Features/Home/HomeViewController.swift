@@ -27,29 +27,21 @@ final class HomeViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupTableView()
-        setupBindings()
-        setupActions()
         
-        viewModel.loadData()
-    }
-    
-    private func setupTableView() {
         screen.tableView.delegate = self
         screen.tableView.dataSource = self
+        
+        screen.monthCarouselView.delegate = self
+        
+        setupBindings()
+        setupActions()
+        viewModel.loadData()
+        
     }
     
     private func setupBindings() {
         viewModel.onDataUpdated = { [weak self] in
             guard let self = self else { return }
-            
-            self.screen.setupHeaderData(
-                name: self.viewModel.userName,
-                amount: self.viewModel.availableAmount,
-                used: self.viewModel.usedAmount,
-                limit: self.viewModel.limitAmount,
-                progress: self.viewModel.budgetProgress
-            )
             
             self.screen.tableView.reloadData()
         }
@@ -83,5 +75,20 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 72
+    }
+}
+
+extension HomeViewController: MonthCarouselViewDelegate {
+    
+    func monthCarouselView(_ view: MonthCarouselView, didSelectMonthAt monthIndex: Int) {
+        // Este é o método que você solicitou para integrar a lógica de atualização.
+        // O índice do mês (0-11) é passado para você.
+        
+        // Como o código de atualização do restante da Home (BudgetCardView e TableView)
+        // será desenvolvido depois, por enquanto, vou apenas adicionar um print para provar que funciona.
+        print("Mês atual: \(monthIndex).")
+        
+        // Exemplo de como seria a chamada para o ViewModel futuramente:
+        // viewModel.loadTransactions(forMonth: monthIndex)
     }
 }

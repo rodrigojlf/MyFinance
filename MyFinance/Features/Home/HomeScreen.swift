@@ -9,60 +9,68 @@ import UIKit
 
 final class HomeScreen: UIView {
     
-    lazy var tableView: UITableView = {
-        let table = UITableView(frame: .zero, style: .grouped)
-        table.translatesAutoresizingMaskIntoConstraints = false
-        table.backgroundColor = .white
-        table.separatorStyle = .none
-        table.showsVerticalScrollIndicator = false
-        table.register(TransactionCell.self, forCellReuseIdentifier: TransactionCell.identifier)
-        return table
-    }()
+    private lazy var headerView = HeaderView()
     
-    let headerContainer = UIView()
-    
-    private lazy var greetingLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .titleSm
-        label.textColor = .gray700
-        return label
-    }()
-    
-    private lazy var subtitleLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Vamos organizar suas finanças?"
-        label.font = .textSm
-        label.textColor = .gray500
-        return label
+    // NOVO COMPONENTE: Instanciação e adição ao View Hierarchy.
+    lazy var monthCarouselView: MonthCarouselView = {
+        let view = MonthCarouselView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
     }()
     
     let budgetCard = BudgetCardView()
     
-    private lazy var transactionsTitleLabel: UILabel = {
+    private lazy var tableTitleLabel: UILabel = {
         let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = .title2Xs
+        label.textColor = .gray600
+        label.textAlignment = .left
         label.text = "LANÇAMENTOS"
-        label.font = .titleXs
-        label.textColor = .gray700
+        label.translatesAutoresizingMaskIntoConstraints = false
         return label
+    }()
+    
+    lazy var numberOfTransactionsLabel: UILabel = {
+        let label = UILabel()
+        label.font = .titleXs
+        label.textColor = .gray600
+        label.textAlignment = .center
+        label.text = "0" // alterar dinamicamente
+        label.backgroundColor = .gray300
+        label.layer.cornerRadius = 8
+        label.clipsToBounds = true
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    private lazy var tableHeaderView = UIView()
+    
+    lazy var tableView: UITableView = {
+        let table = UITableView(frame: .zero, style: .grouped)
+        table.backgroundColor = .gray100
+        table.separatorStyle = .none
+        table.showsVerticalScrollIndicator = false
+        table.layer.cornerRadius = 12
+        table.register(TransactionCell.self, forCellReuseIdentifier: TransactionCell.identifier)
+        table.translatesAutoresizingMaskIntoConstraints = false
+        return table
     }()
     
     lazy var fabButton: UIButton = {
         let button = UIButton(type: .system)
-        button.translatesAutoresizingMaskIntoConstraints = false
         button.backgroundColor = .gray700
-        button.tintColor = .white
-        let config = UIImage.SymbolConfiguration(pointSize: 24, weight: .bold)
+        button.tintColor = .gray100
+        let config = UIImage.SymbolConfiguration(pointSize: 24, weight: .regular)
         button.setImage(UIImage(systemName: "plus", withConfiguration: config), for: .normal)
         button.layer.cornerRadius = 28
-        button.layer.shadowColor = UIColor.black.cgColor
+        button.layer.shadowColor = UIColor.gray700.cgColor
         button.layer.shadowOpacity = 0.3
         button.layer.shadowOffset = CGSize(width: 0, height: 4)
         button.layer.shadowRadius = 4
+        button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
+    
     
     init() {
         super.init(frame: .zero)
@@ -74,63 +82,63 @@ final class HomeScreen: UIView {
     }
     
     private func setupView() {
-        backgroundColor = .white
+        backgroundColor = .gray200
         
+        addSubview(headerView)
+        addSubview(monthCarouselView)
+        addSubview(budgetCard)
         addSubview(tableView)
         addSubview(fabButton)
         
-        setupHeader()
         setupConstraints()
+        setupTableHeaderView()
     }
     
     private func setupConstraints() {
-    NSLayoutConstraint.activate([
-        tableView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
-        tableView.leadingAnchor.constraint(equalTo: leadingAnchor),
-        tableView.trailingAnchor.constraint(equalTo: trailingAnchor),
-        tableView.bottomAnchor.constraint(equalTo: bottomAnchor),
-        
-        fabButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -24),
-        fabButton.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -24),
-        fabButton.widthAnchor.constraint(equalToConstant: 56),
-        fabButton.heightAnchor.constraint(equalToConstant: 56)
-    ])
-}
-    
-    private func setupHeader() {
-        headerContainer.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 360)
-        
-        headerContainer.addSubview(greetingLabel)
-        headerContainer.addSubview(subtitleLabel)
-        headerContainer.addSubview(budgetCard)
-        headerContainer.addSubview(transactionsTitleLabel)
-        
-        setupHeaderConstraints()
-        
-        tableView.tableHeaderView = headerContainer
-    }
-    
-    private func setupHeaderConstraints() {
         NSLayoutConstraint.activate([
-            greetingLabel.topAnchor.constraint(equalTo: headerContainer.topAnchor, constant: 16),
-            greetingLabel.leadingAnchor.constraint(equalTo: headerContainer.leadingAnchor, constant: 24),
+            headerView.topAnchor.constraint(equalTo: topAnchor),
+            headerView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            headerView.trailingAnchor.constraint(equalTo: trailingAnchor),
             
-            subtitleLabel.topAnchor.constraint(equalTo: greetingLabel.bottomAnchor, constant: 4),
-            subtitleLabel.leadingAnchor.constraint(equalTo: headerContainer.leadingAnchor, constant: 24),
+            monthCarouselView.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: 20),
+            monthCarouselView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            monthCarouselView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
             
-            budgetCard.topAnchor.constraint(equalTo: subtitleLabel.bottomAnchor, constant: 32),
-            budgetCard.leadingAnchor.constraint(equalTo: headerContainer.leadingAnchor, constant: 24),
-            budgetCard.trailingAnchor.constraint(equalTo: headerContainer.trailingAnchor, constant: -24),
+            budgetCard.topAnchor.constraint(equalTo: monthCarouselView.bottomAnchor, constant: 16),
+            budgetCard.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            budgetCard.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            budgetCard.heightAnchor.constraint(equalToConstant: 214),
             
-            transactionsTitleLabel.topAnchor.constraint(equalTo: budgetCard.bottomAnchor, constant: 32),
-            transactionsTitleLabel.leadingAnchor.constraint(equalTo: headerContainer.leadingAnchor, constant: 24),
-            transactionsTitleLabel.bottomAnchor.constraint(equalTo: headerContainer.bottomAnchor, constant: -16)
+            tableView.topAnchor.constraint(equalTo: budgetCard.bottomAnchor, constant: 20),
+            tableView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            tableView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            tableView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
+            
+            fabButton.centerXAnchor.constraint(equalTo: centerXAnchor),
+            fabButton.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -6),
+            fabButton.widthAnchor.constraint(equalToConstant: 56),
+            fabButton.heightAnchor.constraint(equalToConstant: 56)
         ])
     }
     
-    
-    func setupHeaderData(name: String, amount: String, used: String, limit: String, progress: Float) {
-        greetingLabel.text = "OLÁ, \(name.uppercased())"
-        budgetCard.setup(amount: amount, used: used, limit: limit, progress: progress)
+    private func setupTableHeaderView() {
+        tableHeaderView.frame = CGRect(x: 0, y: 0, width: tableView.frame.width, height: 40)
+        tableHeaderView.backgroundColor = .gray100
+        
+        tableHeaderView.addSubview(tableTitleLabel)
+        tableHeaderView.addSubview(numberOfTransactionsLabel)
+        
+        NSLayoutConstraint.activate([
+            tableTitleLabel.leadingAnchor.constraint(equalTo: tableHeaderView.leadingAnchor, constant: 20),
+            tableTitleLabel.topAnchor.constraint(equalTo: tableHeaderView.topAnchor, constant: 15),
+            tableTitleLabel.bottomAnchor.constraint(equalTo: tableHeaderView.bottomAnchor, constant: -15),
+            
+            numberOfTransactionsLabel.trailingAnchor.constraint(equalTo: tableHeaderView.trailingAnchor, constant: -20),
+            numberOfTransactionsLabel.centerYAnchor.constraint(equalTo: tableTitleLabel.centerYAnchor),
+            numberOfTransactionsLabel.widthAnchor.constraint(equalToConstant: 24),
+            numberOfTransactionsLabel.heightAnchor.constraint(equalToConstant: 18),
+        ])
+        
+        tableView.tableHeaderView = tableHeaderView
     }
 }
