@@ -30,28 +30,32 @@ final class BudgetSettingsViewController: UIViewController {
     }
     
     private func setupTableView() {
-        customView.tableView.delegate = self
-        customView.tableView.dataSource = self
+        customView.budgetListView.tableView.delegate = self
+        customView.budgetListView.tableView.dataSource = self
     }
     
     private func setupBindings() {
         viewModel.onDataUpdated = { [weak self] in
-            self?.customView.tableView.reloadData()
+            self?.customView.budgetListView.tableView.reloadData()
         }
     }
     
     private func setupActions() {
-        customView.backButton.addTarget(self, action: #selector(backTapped), for: .touchUpInside)
-        customView.addButton.addTarget(self, action: #selector(addTapped), for: .touchUpInside)
+        customView.header.dismiss = {
+            self.navigationController?.popViewController(animated: true)
+        }
+        
+//        customView.backButton.addTarget(self, action: #selector(backTapped), for: .touchUpInside)
+//        customView.addButton.addTarget(self, action: #selector(addTapped), for: .touchUpInside)
     }
     
     @objc private func backTapped() { viewModel.goBack() }
     
     @objc private func addTapped() {
-        viewModel.addBudget(monthYear: customView.monthInput.text, amount: customView.amountInput.text)
+//        viewModel.addBudget(monthYear: customView.monthInput.text, amount: customView.amountInput.text)
         // Limpar inputs após adicionar
-        customView.monthInput.text = ""
-        customView.amountInput.text = ""
+//        customView.monthInput.text = ""
+//        customView.amountInput.text = ""
         view.endEditing(true)
     }
 }

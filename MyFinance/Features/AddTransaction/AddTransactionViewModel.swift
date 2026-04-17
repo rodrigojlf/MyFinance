@@ -8,23 +8,16 @@
 import Foundation
 
 final class AddTransactionViewModel {
-    var onSaveSuccess: (() -> Void)?
     
-    private var transactionType: TransactionType = .expense
-    
-    func updateType(_ type: TransactionType) {
-        self.transactionType = type
-    }
-    
-    func saveTransaction(title: String?, category: String?, amount: String?, date: String?) {
-        guard let title = title, !title.isEmpty,
-              let amount = amount, !amount.isEmpty else {
-            print("Erro: Campos obrigatórios vazios")
-            return
-        }
+    func saveTransaction(title: String?, date: String?, amount: String?, type: TransactionType?) {
         
-        print("Salvando: \(title) de \(amount) como \(transactionType)")
         
-        onSaveSuccess?()
+//        let newTransaction = Transaction(id: UUID().uuidString,
+//                                         title: title,
+//                                         date: date,
+//                                         amount: amount,
+//                                         type: type,
+//                                         iconName: iconName)
+//        // save to a budget.
     }
 }

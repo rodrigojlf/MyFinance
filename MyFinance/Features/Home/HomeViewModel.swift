@@ -21,12 +21,6 @@ final class HomeViewModel {
         Transaction(id: "5", title: "Salário", date: "05/05/25", amount: 5000.00, type: .income, iconName: "briefcase")
     ]
     
-//    let userName = "Jonas"
-//    let availableAmount = "R$ 1.256,98"
-//    let usedAmount = "R$ 2.943,02"
-//    let limitAmount = "R$ 4.200,00"
-//    let budgetProgress: Float = 0.7
-    
     func loadData() {
 //        self.transactions = [
 //            Transaction(id: "1", title: "Mercado", date: "02/05/25", amount: 450.67, type: .expense, iconName: "basket"),

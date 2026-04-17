@@ -15,9 +15,10 @@ final class BudgetSettingsViewModel {
     
     func loadData() {
         budgets = [
-//            Budget(id: "1", monthYear: "Junho 2025", amount: 4500.00),
-//            Budget(id: "2", monthYear: "Maio 2025", amount: 4200.00),
-//            Budget(id: "3", monthYear: "Abril 2025", amount: 4500.00)
+            Budget(id: "1", monthYear: "03/2026", limitAmount: 7000.00, transactions: []),
+            Budget(id: "2", monthYear: "04/2026", limitAmount: 8000.00, transactions: []),
+            Budget(id: "3", monthYear: "05/2026", limitAmount: 5000.00, transactions: []),
+            Budget(id: "4", monthYear: "06/2026", limitAmount: 9000.00, transactions: []),
         ]
         onDataUpdated?()
     }
@@ -26,7 +27,6 @@ final class BudgetSettingsViewModel {
         guard let month = monthYear, !month.isEmpty,
               let amountStr = amount, let value = Double(amountStr.replacingOccurrences(of: ",", with: ".")) else { return }
         
-//        let newBudget = Budget(id: UUID().uuidString, monthYear: month, amount: value)
         let newBudget = Budget(id: UUID().uuidString, monthYear: month, limitAmount: value, transactions: [])
         budgets.insert(newBudget, at: 0)
         onDataUpdated?()

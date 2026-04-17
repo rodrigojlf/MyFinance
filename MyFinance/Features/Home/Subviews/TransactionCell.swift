@@ -11,6 +11,8 @@ final class TransactionCell: UITableViewCell {
     
     static let identifier = "TransactionCell"
     
+    var onDeleteTapped: (() -> Void)?
+    
     private lazy var iconContainerView: UIView = {
         let view = UIView()
         view.backgroundColor = .gray200
@@ -69,12 +71,19 @@ final class TransactionCell: UITableViewCell {
         return img
     }()
     
-    private lazy var deleteIconImageView: UIImageView = {
-        let img = UIImageView()
-        img.contentMode = .scaleAspectFit
-        img.translatesAutoresizingMaskIntoConstraints = false
-        return img
+    private lazy var deleteButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(UIImage(named: "trash"), for: .normal)
+        button.tintColor = .appMagenta
+        button.addTarget(self, action: #selector(deleteAction), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
     }()
+    
+    @objc private func deleteAction() {
+        print("tocou no botao")
+        onDeleteTapped?()
+    }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -89,16 +98,16 @@ final class TransactionCell: UITableViewCell {
         selectionStyle = .none
         backgroundColor = .gray100
         layer.borderColor = UIColor.gray200.cgColor
-        layer.borderWidth = 1
+        layer.borderWidth = 0.5
         
-        addSubview(iconContainerView)
+        contentView.addSubview(iconContainerView)
         iconContainerView.addSubview(iconImageView)
-        addSubview(titleLabel)
-        addSubview(dateLabel)
-        addSubview(currencyLabel)
-        addSubview(amountLabel)
-        addSubview(arrowIconImageView)
-        addSubview(deleteIconImageView)
+        contentView.addSubview(titleLabel)
+        contentView.addSubview(dateLabel)
+        contentView.addSubview(currencyLabel)
+        contentView.addSubview(amountLabel)
+        contentView.addSubview(arrowIconImageView)
+        contentView.addSubview(deleteButton)
         
         setupConstraints()
     }
@@ -121,12 +130,12 @@ final class TransactionCell: UITableViewCell {
             dateLabel.leadingAnchor.constraint(equalTo: iconContainerView.trailingAnchor, constant: 12),
             dateLabel.bottomAnchor.constraint(equalTo: iconContainerView.bottomAnchor),
             
-            deleteIconImageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
-            deleteIconImageView.widthAnchor.constraint(equalToConstant: 16),
-            deleteIconImageView.heightAnchor.constraint(equalToConstant: 16),
-            deleteIconImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            deleteButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
+            deleteButton.widthAnchor.constraint(equalToConstant: 16),
+            deleteButton.heightAnchor.constraint(equalToConstant: 16),
+            deleteButton.centerYAnchor.constraint(equalTo: centerYAnchor),
             
-            arrowIconImageView.trailingAnchor.constraint(equalTo: deleteIconImageView.leadingAnchor, constant: -12),
+            arrowIconImageView.trailingAnchor.constraint(equalTo: deleteButton.leadingAnchor, constant: -12),
             arrowIconImageView.widthAnchor.constraint(equalToConstant: 14),
             arrowIconImageView.heightAnchor.constraint(equalToConstant: 14),
             arrowIconImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
@@ -146,6 +155,5 @@ final class TransactionCell: UITableViewCell {
         dateLabel.text = transaction.date
         amountLabel.text = transaction.amount.decimalFormatted
         arrowIconImageView.image = UIImage(named: "caret-\(transaction.type == .income ? "up" : "down")-fill")
-        deleteIconImageView.image = UIImage(named: "trash")
     }
 }

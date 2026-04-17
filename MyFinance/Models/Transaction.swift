@@ -19,5 +19,5 @@ struct Transaction {
     let date: String
     let amount: Double
     let type: TransactionType
-    let iconName: String
+    let iconName: String // É o valor digitado em Categoria - textfield
 }

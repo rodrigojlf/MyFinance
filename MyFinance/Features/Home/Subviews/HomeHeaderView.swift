@@ -1,5 +1,5 @@
 //
-//  HeaderView.swift
+//  HomeHeaderView.swift
 //  MyFinance
 //
 //  Created by Rodrigo Lima on 06/04/26.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class HeaderView: UIView {
+final class HomeHeaderView: UIView {
     
     var onLogoutButtonTapped: (() -> Void)?
     

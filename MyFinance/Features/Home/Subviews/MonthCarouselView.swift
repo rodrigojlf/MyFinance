@@ -110,36 +110,24 @@ final class MonthCarouselView: UIView {
         selectedIndex = index
     }
         
-    // Cria o layout compositional para o carrossel, garantindo o efeito de "snapping" central.
     private func createCompositionalLayout() -> UICollectionViewLayout {
-            // A closure nos dá o 'layoutEnvironment', permitindo ler dimensões em tempo real
             return UICollectionViewCompositionalLayout { (sectionIndex, layoutEnvironment) -> NSCollectionLayoutSection? in
                 
-                // 1. Largura real da CollectionView na tela
                 let collectionWidth = layoutEnvironment.container.effectiveContentSize.width
-                
-                // 2. Calcula a largura exata de 1 item (0.2 = 20% = 5 itens visíveis)
                 let itemWidth = collectionWidth * 0.2
-                
-                // 3. Calcula o espaço vazio perfeito: (Largura total - Largura de 1 item) / 2
                 let horizontalInset = (collectionWidth - itemWidth) / 2.0
                 
-                // 4. Item ocupa 100% do espaço que o grupo fornecer
                 let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
                                                       heightDimension: .fractionalHeight(1.0))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 
-                // 5. Grupo com tamanho ABSOLUTO evita que os insets espremam o layout
                 let groupSize = NSCollectionLayoutSize(widthDimension: .absolute(itemWidth),
                                                        heightDimension: .fractionalHeight(1.0))
-                // Para scroll contínuo, é ideal que cada grupo seja composto por apenas 1 item
                 let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
                 
-                // 6. Seção contínua
                 let section = NSCollectionLayoutSection(group: group)
                 section.orthogonalScrollingBehavior = .continuous
                 
-                // 7. A Mágica: Adicionamos o espaçamento vazio no começo e no fim da rolagem
                 section.contentInsets = NSDirectionalEdgeInsets(top: 0,
                                                                 leading: horizontalInset,
                                                                 bottom: 0,
@@ -150,7 +138,6 @@ final class MonthCarouselView: UIView {
         }
 }
 
-// MARK: - Extensões de UICollectionViewDataSource e UICollectionViewDelegate
 extension MonthCarouselView: UICollectionViewDataSource, UICollectionViewDelegate { // mover para a HomeViewController?
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

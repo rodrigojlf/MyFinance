@@ -81,14 +81,9 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate {
 extension HomeViewController: MonthCarouselViewDelegate {
     
     func monthCarouselView(_ view: MonthCarouselView, didSelectMonthAt monthIndex: Int) {
-        // Este é o método que você solicitou para integrar a lógica de atualização.
-        // O índice do mês (0-11) é passado para você.
-        
-        // Como o código de atualização do restante da Home (BudgetCardView e TableView)
-        // será desenvolvido depois, por enquanto, vou apenas adicionar um print para provar que funciona.
+        // Método  para integrar a lógica de atualização.
         print("Mês atual: \(monthIndex).")
         
-        // Exemplo de como seria a chamada para o ViewModel futuramente:
-        // viewModel.loadTransactions(forMonth: monthIndex)
+        // TO DO - viewModel.loadTransactions(forMonth: monthIndex)
     }
 }

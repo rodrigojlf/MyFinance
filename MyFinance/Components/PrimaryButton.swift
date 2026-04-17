@@ -21,11 +21,11 @@ final class PrimaryButton: UIButton {
     private func setupButton(title: String) {
         translatesAutoresizingMaskIntoConstraints = false
         setTitle(title, for: .normal)
-        setTitleColor(.white, for: .normal)
+        setTitleColor(.gray100, for: .normal)
         titleLabel?.font = .buttonMd
         backgroundColor = .appMagenta
-        layer.cornerRadius = 12
+        layer.cornerRadius = 8
         
-        heightAnchor.constraint(equalToConstant: 52).isActive = true
+        heightAnchor.constraint(equalToConstant: 48).isActive = true
     }
 }

@@ -9,9 +9,8 @@ import UIKit
 
 final class HomeScreen: UIView {
     
-    private lazy var headerView = HeaderView()
+    private lazy var headerView = HomeHeaderView()
     
-    // NOVO COMPONENTE: Instanciação e adição ao View Hierarchy.
     lazy var monthCarouselView: MonthCarouselView = {
         let view = MonthCarouselView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -75,6 +74,8 @@ final class HomeScreen: UIView {
     init() {
         super.init(frame: .zero)
         setupView()
+        setupConstraints()
+        setupTableHeaderView()
     }
     
     required init?(coder: NSCoder) {
@@ -89,9 +90,6 @@ final class HomeScreen: UIView {
         addSubview(budgetCard)
         addSubview(tableView)
         addSubview(fabButton)
-        
-        setupConstraints()
-        setupTableHeaderView()
     }
     
     private func setupConstraints() {
@@ -124,6 +122,8 @@ final class HomeScreen: UIView {
     private func setupTableHeaderView() {
         tableHeaderView.frame = CGRect(x: 0, y: 0, width: tableView.frame.width, height: 40)
         tableHeaderView.backgroundColor = .gray100
+        tableHeaderView.layer.borderColor = UIColor.gray300.cgColor
+        tableHeaderView.layer.borderWidth = 0.33
         
         tableHeaderView.addSubview(tableTitleLabel)
         tableHeaderView.addSubview(numberOfTransactionsLabel)
