@@ -9,6 +9,8 @@ import UIKit
 
 final class NewBudgetSectionView: UIView {
     
+    var saveAction: (() -> Void)?
+    
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .gray500
@@ -43,7 +45,7 @@ final class NewBudgetSectionView: UIView {
         return img
     }()
     
-    private lazy var dateTextField = CustomTextField(placeholder: "00/0000", icon: calendarIconImageView)
+    lazy var dateTextField = CustomTextField(placeholder: "00/0000", icon: calendarIconImageView)
     
     private lazy var currencyIconImageView: UIImageView = {
         let img = UIImageView(image: UIImage(named: "brazilian-currency")?.withRenderingMode(.alwaysTemplate))
@@ -53,9 +55,17 @@ final class NewBudgetSectionView: UIView {
         return img
     }()
     
-    private lazy var amountTextField = CustomTextField(placeholder: "0,00", icon: currencyIconImageView)
+    lazy var amountTextField = CustomTextField(placeholder: "0,00", icon: currencyIconImageView)
     
-    private lazy var saveButton = PrimaryButton(title: "Adicionar")
+    private lazy var saveButton: PrimaryButton = {
+        let btn = PrimaryButton(title: "Adicionar")
+        btn.addTarget(self, action: #selector(tappedSaveButton), for: .touchUpInside)
+        return btn
+    }()
+    
+    @objc private func tappedSaveButton() {
+        saveAction?()
+    }
     
     init() {
         super.init(frame: .zero)

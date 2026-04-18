@@ -19,13 +19,12 @@ final class PrimaryButton: UIButton {
     }
     
     private func setupButton(title: String) {
-        translatesAutoresizingMaskIntoConstraints = false
         setTitle(title, for: .normal)
         setTitleColor(.gray100, for: .normal)
         titleLabel?.font = .buttonMd
         backgroundColor = .appMagenta
         layer.cornerRadius = 8
-        
+        translatesAutoresizingMaskIntoConstraints = false
         heightAnchor.constraint(equalToConstant: 48).isActive = true
     }
 }

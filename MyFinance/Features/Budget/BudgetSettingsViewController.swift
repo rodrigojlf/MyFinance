@@ -10,7 +10,7 @@ import UIKit
 final class BudgetSettingsViewController: UIViewController {
     
     private let viewModel: BudgetSettingsViewModel
-    private let customView = BudgetSettingsView()
+    private let screen = BudgetSettingsView()
     
     init(viewModel: BudgetSettingsViewModel) {
         self.viewModel = viewModel
@@ -19,7 +19,7 @@ final class BudgetSettingsViewController: UIViewController {
     
     required init?(coder: NSCoder) { fatalError() }
     
-    override func loadView() { self.view = customView }
+    override func loadView() { self.view = screen }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,33 +30,27 @@ final class BudgetSettingsViewController: UIViewController {
     }
     
     private func setupTableView() {
-        customView.budgetListView.tableView.delegate = self
-        customView.budgetListView.tableView.dataSource = self
+        screen.budgetListView.tableView.delegate = self
+        screen.budgetListView.tableView.dataSource = self
     }
     
     private func setupBindings() {
         viewModel.onDataUpdated = { [weak self] in
-            self?.customView.budgetListView.tableView.reloadData()
+            self?.screen.budgetListView.tableView.reloadData()
         }
     }
     
     private func setupActions() {
-        customView.header.dismiss = {
-            self.navigationController?.popViewController(animated: true)
+        screen.header.dismiss = { [weak self] in
+            self?.viewModel.goBack()
         }
-        
-//        customView.backButton.addTarget(self, action: #selector(backTapped), for: .touchUpInside)
-//        customView.addButton.addTarget(self, action: #selector(addTapped), for: .touchUpInside)
-    }
-    
-    @objc private func backTapped() { viewModel.goBack() }
-    
-    @objc private func addTapped() {
-//        viewModel.addBudget(monthYear: customView.monthInput.text, amount: customView.amountInput.text)
-        // Limpar inputs após adicionar
-//        customView.monthInput.text = ""
-//        customView.amountInput.text = ""
-        view.endEditing(true)
+        screen.newBudgetSection.saveAction = { [weak self] in
+            self?.viewModel.addBudget(monthYear: self?.screen.newBudgetSection.dateTextField.text,
+                                      amount: self?.screen.newBudgetSection.amountTextField.text)
+            self?.screen.newBudgetSection.dateTextField.text = ""
+            self?.screen.newBudgetSection.amountTextField.text = ""
+            self?.view.endEditing(true)
+        }
     }
 }
 
@@ -70,11 +64,20 @@ extension BudgetSettingsViewController: UITableViewDataSource, UITableViewDelega
         
         let budget = viewModel.budgets[indexPath.row]
         cell.configure(with: budget)
-        
-        cell.onDeleteTapped = { [weak self] in
-            self?.viewModel.removeBudget(at: indexPath.row)
+        cell.onSwipeThresholdReached = { [weak self] in
+            AlertManager.showConfirmation(on: self, title: "Apagar Orçamento", message: "Tem certeza?") {
+                cell.resetPanPosition(animated: true)
+                self?.viewModel.removeBudget(at: indexPath.row)
+            } onCancel: {
+                cell.resetPanPosition(animated: true)
+            }
+
         }
-        
+        cell.onDeleteTapped = { [weak self] in
+            AlertManager.showConfirmation(on: self, title: "Apagar Orçamento", message: "Tem certeza?") {
+                self?.viewModel.removeBudget(at: indexPath.row)
+            } onCancel: {}
+        }
         return cell
     }
     
