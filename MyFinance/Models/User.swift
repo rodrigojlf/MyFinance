@@ -9,6 +9,7 @@ import Foundation
 
 struct User {
     let name: String
+    var email: String
     var photoUrl: String
     var budgets: [Budget]
 }

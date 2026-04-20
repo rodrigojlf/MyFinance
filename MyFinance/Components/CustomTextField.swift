@@ -7,8 +7,6 @@
 
 import UIKit
 
-import UIKit
-
 final class CustomTextField: UITextField {
     
     enum TextFieldState {
@@ -20,8 +18,6 @@ final class CustomTextField: UITextField {
     private var padding = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
     
     private var iconImageView: UIImageView?
-    
-    var validationRule: ((String) -> Bool)?
     
     init(placeholder: String, isPassword: Bool = false, icon: UIImageView? = nil) {
         super.init(frame: .zero)
@@ -51,7 +47,6 @@ final class CustomTextField: UITextField {
         backgroundColor = .systemGray6
         layer.cornerRadius = 8
         layer.borderWidth = 1
-//        layer.borderColor = UIColor.systemGray5.cgColor
         
         changeVisualState(to: .normal)
         
@@ -59,32 +54,20 @@ final class CustomTextField: UITextField {
     }
     
     private func setupActions() {
-        // Escuta quando o usuário clica no campo
         addTarget(self, action: #selector(didBeginEditing), for: .editingDidBegin)
-        // Escuta quando o usuário sai do campo ou aperta Return
-        addTarget(self, action: #selector(didEndEditing), for: .editingDidEnd)
-        // Escuta cada tecla digitada (opcional, para tirar o vermelho enquanto corrige)
         addTarget(self, action: #selector(textDidChange), for: .editingChanged)
     }
     
     @objc private func didBeginEditing() {
-        changeVisualState(to: .active) // Fica Rosa
-    }
-    
-    @objc private func didEndEditing() {
-        // Quando o usuário termina de digitar, rodamos a validação
-        if let text = self.text, !text.isEmpty, let rule = validationRule {
-            let isValid = rule(text)
-            changeVisualState(to: isValid ? .normal : .error)
-        } else {
-            // Se estiver vazio, volta pro normal
-            changeVisualState(to: .normal)
-        }
+        changeVisualState(to: .active)
     }
     
     @objc private func textDidChange() {
-        // Quando o usuário começa a apagar/digitar para corrigir o erro, voltamos para a cor de edição
         changeVisualState(to: .active)
+    }
+    
+    func setVisualState(hasError: Bool) {
+        changeVisualState(to: hasError ? .error : .normal)
     }
     
     private func changeVisualState(to state: TextFieldState) {
@@ -93,21 +76,21 @@ final class CustomTextField: UITextField {
             layer.borderColor = UIColor.systemGray5.cgColor
             iconImageView?.tintColor = UIColor.systemGray
         case .active:
-            layer.borderColor = UIColor(red: 218/255, green: 75/255, blue: 221/255, alpha: 1.0).cgColor // Borda Rosa
-            iconImageView?.tintColor = UIColor(red: 218/255, green: 75/255, blue: 221/255, alpha: 1.0)  // Ícone Rosa
+            layer.borderColor = UIColor(red: 218/255, green: 75/255, blue: 221/255, alpha: 1.0).cgColor
+            iconImageView?.tintColor = UIColor(red: 218/255, green: 75/255, blue: 221/255, alpha: 1.0)
         case .error:
-            layer.borderColor = UIColor.systemRed.cgColor  // Borda Vermelha
-            iconImageView?.tintColor = UIColor.systemRed   // Ícone Vermelho
+            layer.borderColor = UIColor.systemRed.cgColor
+            iconImageView?.tintColor = UIColor.systemRed
         }
     }
     
     override func leftViewRect(forBounds bounds: CGRect) -> CGRect {
-            let iconSize: CGFloat = 24
-            let leftMargin: CGFloat = 12
-            let yPosition = (bounds.height - iconSize) / 2
-            
-            return CGRect(x: leftMargin, y: yPosition, width: iconSize, height: iconSize)
-        }
+        let iconSize: CGFloat = 24
+        let leftMargin: CGFloat = 12
+        let yPosition = (bounds.height - iconSize) / 2
+        
+        return CGRect(x: leftMargin, y: yPosition, width: iconSize, height: iconSize)
+    }
     
     override func textRect(forBounds bounds: CGRect) -> CGRect { return bounds.inset(by: padding) }
     

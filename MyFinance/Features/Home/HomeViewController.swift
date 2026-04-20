@@ -41,15 +41,22 @@ final class HomeViewController: UIViewController {
     
     private func setupBindings() {
         viewModel.onDataUpdated = { [weak self] in
-            guard let self = self else { return }
-            
-            self.screen.tableView.reloadData()
+            self?.screen.tableView.reloadData()
+        }
+        viewModel.onLogoutFailure = { [weak self] errorMessage in
+            AlertManager.showAlert(on: self, title: "Erro no logout", message: errorMessage)
         }
     }
     
     private func setupActions() {
         screen.fabButton.addTarget(self, action: #selector(fabTapped), for: .touchUpInside)
-        screen.budgetCard.onSettingsTapped = { [weak self] in self?.viewModel.didTapSettings() }
+        screen.budgetCard.onSettingsTapped = { [weak self] in
+            self?.viewModel.didTapSettings()
+        }
+        //Decidir se vai manter aqui e separar responsabilidades
+        screen.headerView.onLogoutButtonTapped = { [weak self] in
+            self?.viewModel.logout()
+        }
     }
     
     @objc private func fabTapped() {

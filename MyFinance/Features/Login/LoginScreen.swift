@@ -9,6 +9,9 @@ import UIKit
 
 protocol LoginScreenProtocol: AnyObject {
     func tappedLoginButton()
+    func nameDidChange(text: String)
+    func emailDidChange(text: String)
+    func passwordDidChange(text: String)
 }
 
 final class LoginScreen: UIView {
@@ -77,7 +80,7 @@ final class LoginScreen: UIView {
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
-        
+    
     lazy var loginButton: PrimaryButton = {
         let button = PrimaryButton(title: "Entrar")
         button.addTarget(self, action: #selector(tappedLoginButton), for: .touchUpInside)
@@ -106,7 +109,7 @@ final class LoginScreen: UIView {
     }
     
     private func setupView() {
-        backgroundColor = .white
+        backgroundColor = .gray100
         
         addSubview(headerImageView)
         addSubview(titleLabel)
@@ -120,6 +123,8 @@ final class LoginScreen: UIView {
         passwordInput.addSubview(hidePasswordButton)
         
         setupConstraints()
+        setupTextFieldActions()
+        setLoginButton(isEnabled: false)
     }
     
     private func setupConstraints() {
@@ -160,5 +165,51 @@ final class LoginScreen: UIView {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesBegan(touches, with: event)
         self.endEditing(true)
+    }
+    
+    private func setupTextFieldActions() {
+        nameInput.addTarget(self, action: #selector(nameChanged), for: .editingChanged)
+        emailInput.addTarget(self, action: #selector(emailChanged), for: .editingChanged)
+        passwordInput.addTarget(self, action: #selector(passwordChanged), for: .editingChanged)
+    }
+    
+    @objc private func nameChanged(_ textField: UITextField) {
+        delegate?.nameDidChange(text: textField.text ?? "")
+    }
+    
+    @objc private func emailChanged(_ textField: UITextField) {
+        delegate?.emailDidChange(text: textField.text ?? "")
+    }
+    
+    @objc private func passwordChanged(_ textField: UITextField) {
+        delegate?.passwordDidChange(text: textField.text ?? "")
+    }
+    
+    func setNameError(_ hasError: Bool) {
+        nameInput.setVisualState(hasError: hasError)
+    }
+    
+    func setEmailError(_ hasError: Bool) {
+        emailInput.setVisualState(hasError: hasError)
+    }
+    
+    func setPasswordError(_ hasError: Bool) {
+        passwordInput.setVisualState(hasError: hasError)
+    }
+    
+    func setLoginButton(isEnabled: Bool) {
+        loginButton.isEnabled = isEnabled
+        loginButton.alpha = isEnabled ? 1.0 : 0.5
+    }
+    
+    //Facilitar os testes de login
+    func injectLoginData() {
+        nameInput.text = "JONAS"
+        nameChanged(nameInput)
+        emailInput.text = "teste@email.com"
+        emailChanged(emailInput)
+        passwordInput.text = "teste123"
+        passwordInput.isSecureTextEntry = true
+        passwordChanged(passwordInput)
     }
 }

@@ -269,11 +269,7 @@ final class BudgetCardView: UIView {
         NSLayoutConstraint.activate(constraints)
     }
     
-//    func setup(amount: String, used: String, limit: String, progress: Float) {
-//        balanceLabel.text = amount
-//        usedLabel.text = "Usado \(used)"
-//        limitLabel.text = "Limite \(limit)"
-//        progressBar.progress = progress
-//    }
-    
+    func setupBudget() {
+        
+    }
 }

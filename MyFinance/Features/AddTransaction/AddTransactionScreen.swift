@@ -87,17 +87,35 @@ final class AddTransactionScreen: UIView {
     lazy var dateTextField: CustomTextField = {
         let tf = CustomTextField(placeholder: "dd/MM/yyyy", icon: calendarIcon)
         tf.keyboardType = .numberPad
-        tf.validationRule = { textDigitado in
-            if textDigitado.count < 10 { return false }
-            
+        tf.addTarget(self, action: #selector(validateDateTextField), for: .editingDidEnd)
+        tf.addTarget(self, action: #selector(clearDateError), for: .editingChanged)
+        
+        return tf
+    }()
+    
+    @objc private func clearDateError() {
+        dateTextField.setVisualState(hasError: false)
+    }
+    
+    @objc private func validateDateTextField() {
+        guard let textDigitado = dateTextField.text, !textDigitado.isEmpty else {
+            dateTextField.setVisualState(hasError: false)
+            return
+        }
+        
+        let isValid: Bool
+        
+        if textDigitado.count < 10 {
+            isValid = false
+        } else {
             let formatter = DateFormatter()
             formatter.dateFormat = "dd/MM/yyyy"
             formatter.locale = Locale(identifier: "pt_BR")
-            
-            return formatter.date(from: textDigitado) != nil
+            isValid = formatter.date(from: textDigitado) != nil
         }
-        return tf
-    }()
+        
+        dateTextField.setVisualState(hasError: !isValid)
+    }
     
     private lazy var buttonsHorizontalStackView: UIStackView = {
         let stackView = UIStackView()

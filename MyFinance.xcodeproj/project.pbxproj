@@ -6,8 +6,15 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		52212D8A0E17257FC96580B0 /* Pods_MyFinance.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1698FD7E804955C6484C6FC2 /* Pods_MyFinance.framework */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
+		1698FD7E804955C6484C6FC2 /* Pods_MyFinance.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MyFinance.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8AEF4B922F7DD204005F7BA3 /* MyFinance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyFinance.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9E20397BD45730EA87BD3414 /* Pods-MyFinance.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MyFinance.debug.xcconfig"; path = "Target Support Files/Pods-MyFinance/Pods-MyFinance.debug.xcconfig"; sourceTree = "<group>"; };
+		DD6DE42ADF4A6CC167491597 /* Pods-MyFinance.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MyFinance.release.xcconfig"; path = "Target Support Files/Pods-MyFinance/Pods-MyFinance.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -36,17 +43,37 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				52212D8A0E17257FC96580B0 /* Pods_MyFinance.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0921D0B3E13A7CC2C8F31A79 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1698FD7E804955C6484C6FC2 /* Pods_MyFinance.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		179B31D5F33E35C1E95D8B69 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				9E20397BD45730EA87BD3414 /* Pods-MyFinance.debug.xcconfig */,
+				DD6DE42ADF4A6CC167491597 /* Pods-MyFinance.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		8AEF4B892F7DD204005F7BA3 = {
 			isa = PBXGroup;
 			children = (
 				8AEF4B942F7DD204005F7BA3 /* MyFinance */,
 				8AEF4B932F7DD204005F7BA3 /* Products */,
+				179B31D5F33E35C1E95D8B69 /* Pods */,
+				0921D0B3E13A7CC2C8F31A79 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -65,9 +92,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8AEF4BA52F7DD204005F7BA3 /* Build configuration list for PBXNativeTarget "MyFinance" */;
 			buildPhases = (
+				597053713CAF5225D4ADCD5F /* [CP] Check Pods Manifest.lock */,
 				8AEF4B8E2F7DD204005F7BA3 /* Sources */,
 				8AEF4B8F2F7DD204005F7BA3 /* Frameworks */,
 				8AEF4B902F7DD204005F7BA3 /* Resources */,
+				84566A12E6EE5D78D4D817DF /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -77,8 +106,6 @@
 				8AEF4B942F7DD204005F7BA3 /* MyFinance */,
 			);
 			name = MyFinance;
-			packageProductDependencies = (
-			);
 			productName = MyFinance;
 			productReference = 8AEF4B922F7DD204005F7BA3 /* MyFinance.app */;
 			productType = "com.apple.product-type.application";
@@ -127,6 +154,48 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		597053713CAF5225D4ADCD5F /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-MyFinance-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		84566A12E6EE5D78D4D817DF /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-MyFinance/Pods-MyFinance-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-MyFinance/Pods-MyFinance-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-MyFinance/Pods-MyFinance-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		8AEF4B8E2F7DD204005F7BA3 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -140,12 +209,14 @@
 /* Begin XCBuildConfiguration section */
 		8AEF4BA62F7DD204005F7BA3 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9E20397BD45730EA87BD3414 /* Pods-MyFinance.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 4K89H79C9E;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MyFinance/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";
@@ -173,12 +244,14 @@
 		};
 		8AEF4BA72F7DD204005F7BA3 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = DD6DE42ADF4A6CC167491597 /* Pods-MyFinance.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 4K89H79C9E;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MyFinance/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";

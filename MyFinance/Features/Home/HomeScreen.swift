@@ -9,7 +9,9 @@ import UIKit
 
 final class HomeScreen: UIView {
     
-    private lazy var headerView = HomeHeaderView()
+    var budget: Budget?
+    
+    lazy var headerView = HomeHeaderView()
     
     lazy var monthCarouselView: MonthCarouselView = {
         let view = MonthCarouselView()
@@ -71,8 +73,9 @@ final class HomeScreen: UIView {
     }()
     
     
-    init() {
+    init(budget: Budget? = nil) {
         super.init(frame: .zero)
+        self.budget = budget
         setupView()
         setupConstraints()
         setupTableHeaderView()

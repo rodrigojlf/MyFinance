@@ -59,7 +59,6 @@ extension AddTransactionViewController: AddTransactionScreenProtocol {
 extension AddTransactionViewController: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
             
-            // Pega o texto atual do campo
             let currentText = textField.text ?? ""
             
             // Verifica se é o comportamento de apagar tudo de uma vez (ex: select all + backspace)
@@ -77,11 +76,11 @@ extension AddTransactionViewController: UITextFieldDelegate {
             // --- APLICAÇÃO DAS MÁSCARAS ---
             
             // Verifique qual textField está sendo editado para aplicar a máscara correta
-        if textField == screen.amountTextField { // Substitua pelo nome da sua variável
+        if textField == screen.amountTextField {
                 textField.text = updatedText.currencyFormatting()
                 return false // Retornamos false para que o iOS não coloque o texto "cru", nós já colocamos o texto formatado acima.
                 
-        } else if textField == screen.dateTextField { // Substitua pelo nome da sua variável
+        } else if textField == screen.dateTextField {
                 textField.text = updatedText.dateFormatting()
                 return false
             }

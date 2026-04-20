@@ -9,9 +9,11 @@ import UIKit
 
 class AppCoordinator: Coordinator {
     var navigationController: UINavigationController
+    private let authService: AuthServiceProtocol
     
-    init(navigationController: UINavigationController) {
+    init(navigationController: UINavigationController, authService: AuthServiceProtocol = AuthenticationService()) {
         self.navigationController = navigationController
+        self.authService = authService
     }
     
     func start() {
@@ -23,14 +25,24 @@ class AppCoordinator: Coordinator {
         let viewController = SplashViewController(viewModel: viewModel)
         
         viewModel.onFinishSplash = { [weak self] in
-            self?.showLoginScreen()
+            self?.routeAfterSplash()
         }
         
         navigationController.setViewControllers([viewController], animated: false)
     }
     
+    private func routeAfterSplash() {
+        if authService.hasActiveSession() {
+            print("Usuário logado.")
+            showHomeScreen()
+        } else {
+            print("Usuário não logado.")
+            showLoginScreen()
+        }
+    }
+    
     private func showLoginScreen() {
-        let viewModel = LoginViewModel()
+        let viewModel = LoginViewModel(authService: authService)
         let viewController = LoginViewController(viewModel: viewModel)
         
         viewModel.onLoginSuccess = { [weak self] in
@@ -41,11 +53,20 @@ class AppCoordinator: Coordinator {
     }
     
     private func showHomeScreen() {
-        let viewModel = HomeViewModel()
+        let viewModel = HomeViewModel(authService: authService)
         let viewController = HomeViewController(viewModel: viewModel)
         
-        viewModel.onAddTransactionRequested = { [weak self] in self?.showAddTransaction() }
-        viewModel.onSettingsRequested = { [weak self] in self?.showBudgetSettings() } // NOVO
+        viewModel.onAddTransactionRequested = { [weak self] in
+            self?.showAddTransaction()
+        }
+        
+        viewModel.onSettingsRequested = { [weak self] in
+            self?.showBudgetSettings()
+        }
+        
+        viewModel.onLogoutSuccess = { [weak self] in
+            self?.showLoginScreen()
+        }
         
         navigationController.setViewControllers([viewController], animated: true)
     }
