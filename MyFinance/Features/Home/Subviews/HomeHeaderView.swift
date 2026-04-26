@@ -14,7 +14,6 @@ final class HomeHeaderView: UIView {
     private lazy var profileImageView: UIImageView = {
         let img = UIImageView()
         img.contentMode = .scaleAspectFill
-        img.image = UIImage(named: "avatar") // carregar em outra tela
         img.tintColor = .gray700
         img.layer.cornerRadius = 20
         img.layer.borderWidth = 1
@@ -28,7 +27,6 @@ final class HomeHeaderView: UIView {
         let label = UILabel()
         label.font = .titleSm
         label.textColor = .gray700
-        label.text = "OLÁ, JONAS!" // carregar em outra tela
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -98,10 +96,13 @@ final class HomeHeaderView: UIView {
         ])
     }
     
-    
-    
-    func setupHeaderData(name: String, amount: String, used: String, limit: String, progress: Float) {
+    func setupHeaderData(name: String, data: Data?) {
         greetingLabel.text = "OLÁ, \(name.uppercased())"
-//        budgetCard.setup(amount: amount, used: used, limit: limit, progress: progress)
+        if data != nil {
+            profileImageView.image = UIImage(data: data!)
+        } else {
+            profileImageView.image = UIImage(systemName: "person.fill")
+            profileImageView.tintColor = .systemGray
+        }
     }
 }

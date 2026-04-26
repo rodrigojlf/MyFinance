@@ -8,16 +8,24 @@
 // Transaction.swift
 import Foundation
 
-enum TransactionType {
+enum TransactionType: Codable {
     case income
     case expense
 }
 
-struct Transaction {
+enum TransactionIcon: String, Codable {
+    case basket
+    case gift
+    case note
+    case home
+    case briefcase
+}
+
+struct Transaction: Codable {
     let id: String
     let title: String
     let date: String
     let amount: Double
     let type: TransactionType
-    let iconName: String // É o valor digitado em Categoria - textfield
+    let iconName: TransactionIcon // É o valor digitado em Categoria - textfield
 }

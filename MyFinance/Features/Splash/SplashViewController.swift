@@ -26,18 +26,9 @@ final class SplashViewController: UIViewController {
         self.view = screen
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-//        viewModel.startSetup()
-    }
-    
     override func viewDidAppear(_ animated: Bool) {
             super.viewDidAppear(animated)
-            
-            // Inicia a animação da View
             screen.startLogoAnimation()
-            
-            // Inicia o timer da ViewModel para navegação
             viewModel.startSetup()
         }
 }

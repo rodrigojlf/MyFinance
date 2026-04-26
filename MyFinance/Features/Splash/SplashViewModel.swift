@@ -12,7 +12,6 @@ final class SplashViewModel {
     var onFinishSplash: (() -> Void)?
     
     func startSetup() {
-        
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
             self?.onFinishSplash?()
         }

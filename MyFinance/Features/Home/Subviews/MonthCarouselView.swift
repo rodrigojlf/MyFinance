@@ -7,20 +7,15 @@
 
 import UIKit
 
-protocol MonthCarouselViewDelegate: AnyObject {
-    func monthCarouselView(_ view: MonthCarouselView, didSelectMonthAt monthIndex: Int)
-}
-
 final class MonthCarouselView: UIView {
     
-    weak var delegate: MonthCarouselViewDelegate?
+    var onMonthChanged: ((Int) -> Void)?
     
     private let months = ["JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"]
     
     private var selectedIndex: Int = 0 {
         didSet {
             collectionView.reloadData()
-            delegate?.monthCarouselView(self, didSelectMonthAt: selectedIndex)
         }
     }
     
@@ -91,7 +86,7 @@ final class MonthCarouselView: UIView {
             rightArrowButton.heightAnchor.constraint(equalToConstant: 16)
         ])
     }
-        
+    
     @objc private func leftArrowTapped() {
         guard selectedIndex > 0 else { return }
         let newIndex = selectedIndex - 1
@@ -104,41 +99,41 @@ final class MonthCarouselView: UIView {
         scrollToItem(at: newIndex)
     }
     
-    private func scrollToItem(at index: Int) {
+    func scrollToItem(at index: Int) {
         let indexPath = IndexPath(item: index, section: 0)
         collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
         selectedIndex = index
     }
-        
+    
     private func createCompositionalLayout() -> UICollectionViewLayout {
-            return UICollectionViewCompositionalLayout { (sectionIndex, layoutEnvironment) -> NSCollectionLayoutSection? in
-                
-                let collectionWidth = layoutEnvironment.container.effectiveContentSize.width
-                let itemWidth = collectionWidth * 0.2
-                let horizontalInset = (collectionWidth - itemWidth) / 2.0
-                
-                let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
-                                                      heightDimension: .fractionalHeight(1.0))
-                let item = NSCollectionLayoutItem(layoutSize: itemSize)
-                
-                let groupSize = NSCollectionLayoutSize(widthDimension: .absolute(itemWidth),
-                                                       heightDimension: .fractionalHeight(1.0))
-                let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-                
-                let section = NSCollectionLayoutSection(group: group)
-                section.orthogonalScrollingBehavior = .continuous
-                
-                section.contentInsets = NSDirectionalEdgeInsets(top: 0,
-                                                                leading: horizontalInset,
-                                                                bottom: 0,
-                                                                trailing: horizontalInset)
-                
-                return section
-            }
+        return UICollectionViewCompositionalLayout { (sectionIndex, layoutEnvironment) -> NSCollectionLayoutSection? in
+            
+            let collectionWidth = layoutEnvironment.container.effectiveContentSize.width
+            let itemWidth = collectionWidth * 0.2
+            let horizontalInset = (collectionWidth - itemWidth) / 2.0
+            
+            let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
+                                                  heightDimension: .fractionalHeight(1.0))
+            let item = NSCollectionLayoutItem(layoutSize: itemSize)
+            
+            let groupSize = NSCollectionLayoutSize(widthDimension: .absolute(itemWidth),
+                                                   heightDimension: .fractionalHeight(1.0))
+            let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+            
+            let section = NSCollectionLayoutSection(group: group)
+            section.orthogonalScrollingBehavior = .continuous
+            
+            section.contentInsets = NSDirectionalEdgeInsets(top: 0,
+                                                            leading: horizontalInset,
+                                                            bottom: 0,
+                                                            trailing: horizontalInset)
+            
+            return section
         }
+    }
 }
 
-extension MonthCarouselView: UICollectionViewDataSource, UICollectionViewDelegate { // mover para a HomeViewController?
+extension MonthCarouselView: UICollectionViewDataSource, UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return months.count
@@ -155,8 +150,10 @@ extension MonthCarouselView: UICollectionViewDataSource, UICollectionViewDelegat
         
         return cell
     }
-        
+    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        scrollToItem(at: indexPath.item)
+        let selectedMonthIndex = indexPath.item
+        scrollToItem(at: selectedMonthIndex)
+        onMonthChanged?(selectedMonthIndex)
     }
 }

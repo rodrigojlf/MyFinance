@@ -31,43 +31,66 @@ final class HomeViewController: UIViewController {
         screen.tableView.delegate = self
         screen.tableView.dataSource = self
         
-        screen.monthCarouselView.delegate = self
-        
         setupBindings()
         setupActions()
         viewModel.loadData()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         
+        let index = viewModel.selectedMonthIndex
+        screen.monthCarouselView.scrollToItem(at: index)
+        initialSetup()
     }
     
     private func setupBindings() {
+        screen.monthCarouselView.onMonthChanged = { [unowned self] month in
+            self.viewModel.selectedMonthIndex = month
+            self.screen.tableView.reloadData()
+            self.screen.budgetCard.setupBudget(budget: self.viewModel.currentBudget,
+                                               for: self.viewModel.currentMonthYear)
+            self.screen.updateNumberOfTransactions(for: self.viewModel.filteredTransactions.count)
+        }
+        
         viewModel.onDataUpdated = { [weak self] in
             self?.screen.tableView.reloadData()
+            self?.screen.updateNumberOfTransactions(for: self?.viewModel.filteredTransactions.count ?? 0)
         }
+        
         viewModel.onLogoutFailure = { [weak self] errorMessage in
             AlertManager.showAlert(on: self, title: "Erro no logout", message: errorMessage)
         }
     }
     
     private func setupActions() {
-        screen.fabButton.addTarget(self, action: #selector(fabTapped), for: .touchUpInside)
+        screen.onFabButtonTapped = { [weak self] in
+            self?.viewModel.didTapAddTransaction()
+        }
+        
         screen.budgetCard.onSettingsTapped = { [weak self] in
             self?.viewModel.didTapSettings()
         }
-        //Decidir se vai manter aqui e separar responsabilidades
+        
         screen.headerView.onLogoutButtonTapped = { [weak self] in
             self?.viewModel.logout()
         }
     }
     
-    @objc private func fabTapped() {
-        viewModel.didTapAddTransaction()
+    private func initialSetup() {
+        screen.headerView.setupHeaderData(name: viewModel.user?.name ?? "erro", data: nil)
+        screen.tableView.reloadData()
+        screen.budgetCard.setupBudget(
+            budget: viewModel.currentBudget,
+            for: viewModel.currentMonthYear
+        )
     }
 }
 
 extension HomeViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.transactions.count
+        return viewModel.filteredTransactions.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -75,22 +98,12 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate {
             return UITableViewCell()
         }
         
-        let transaction = viewModel.transactions[indexPath.row]
+        let transaction = viewModel.filteredTransactions[indexPath.row]
         cell.configure(with: transaction)
         return cell
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 72
-    }
-}
-
-extension HomeViewController: MonthCarouselViewDelegate {
-    
-    func monthCarouselView(_ view: MonthCarouselView, didSelectMonthAt monthIndex: Int) {
-        // Método  para integrar a lógica de atualização.
-        print("Mês atual: \(monthIndex).")
-        
-        // TO DO - viewModel.loadTransactions(forMonth: monthIndex)
     }
 }

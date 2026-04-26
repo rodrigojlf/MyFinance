@@ -9,7 +9,7 @@ import UIKit
 
 final class HomeScreen: UIView {
     
-    var budget: Budget?
+    var onFabButtonTapped: (() -> Void)?
     
     lazy var headerView = HomeHeaderView()
     
@@ -31,12 +31,11 @@ final class HomeScreen: UIView {
         return label
     }()
     
-    lazy var numberOfTransactionsLabel: UILabel = {
+    private lazy var numberOfTransactionsLabel: UILabel = {
         let label = UILabel()
         label.font = .titleXs
         label.textColor = .gray600
         label.textAlignment = .center
-        label.text = "0" // alterar dinamicamente
         label.backgroundColor = .gray300
         label.layer.cornerRadius = 8
         label.clipsToBounds = true
@@ -68,14 +67,17 @@ final class HomeScreen: UIView {
         button.layer.shadowOpacity = 0.3
         button.layer.shadowOffset = CGSize(width: 0, height: 4)
         button.layer.shadowRadius = 4
+        button.addTarget(self, action: #selector(fabButtonTapped), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
+    @objc private func fabButtonTapped() {
+        onFabButtonTapped?()
+    }
     
-    init(budget: Budget? = nil) {
+    init() {
         super.init(frame: .zero)
-        self.budget = budget
         setupView()
         setupConstraints()
         setupTableHeaderView()
@@ -143,5 +145,9 @@ final class HomeScreen: UIView {
         ])
         
         tableView.tableHeaderView = tableHeaderView
+    }
+    
+    func updateNumberOfTransactions(for number: Int) {
+        numberOfTransactionsLabel.text = String(number)
     }
 }

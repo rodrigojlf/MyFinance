@@ -9,28 +9,14 @@ import UIKit
 
 final class BudgetCardView: UIView {
     
-    //    var budget: Budget?
-//    var budget: Budget? = nil
-        let budget: Budget? = Budget(id: UUID().uuidString,
-                                    monthYear: "03/2026",
-                                    limitAmount: 3000.00,
-                                    transactions: [
-                                        Transaction(id: UUID().uuidString,
-                                                    title: "Mercado",
-                                                    date: "02/05/25",
-                                                    amount: 450.67,
-                                                    type: .expense,
-                                                    iconName: "cart"),
-                                        Transaction(id: UUID().uuidString,
-                                                    title: "Aluguel",
-                                                    date: "05/05/25",
-                                                    amount: 2024.00,
-                                                    type: .expense,
-                                                    iconName: "house"),
-                                    ])
-    let date: String = "03/2026"
+    private var budget: Budget?
+    private var date: String = ""
     
     var onSettingsTapped: (() -> Void)?
+    
+    private var withBudgetConstraints: [NSLayoutConstraint] = []
+    private var withoutBudgetConstraints: [NSLayoutConstraint] = []
+    private var progressBarHeightConstraint: NSLayoutConstraint?
     
     private let gradient: CAGradientLayer = {
         let gradientLayer = CAGradientLayer()
@@ -47,7 +33,6 @@ final class BudgetCardView: UIView {
     private lazy var monthLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = date.monthName
         label.font = .titleSm
         label.textColor = .gray100
         return label
@@ -56,7 +41,6 @@ final class BudgetCardView: UIView {
     private lazy var yearLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "/ \(date.yearNumber)"
         label.font = .titleXs
         label.textColor = .gray400
         return label
@@ -117,7 +101,6 @@ final class BudgetCardView: UIView {
     
     @objc private func defineBudgetButtonTapped() {
         onSettingsTapped?()
-// irá navegar para uma tela específica ou injetar aqui mesmo? Sendo em outra tela, como vai recarregar a view?
     }
     
     private lazy var usedLabel: UILabel = {
@@ -150,8 +133,6 @@ final class BudgetCardView: UIView {
     
     private lazy var limitAmountLabel: UILabel = {
         let label = UILabel()
-        label.text = budget != nil ? "R$ \(budget?.limitAmount ?? 0.00)" : "∞"
-        label.font = budget != nil ? .textSm : UIFont.systemFont(ofSize: 24, weight: .regular)
         label.textColor = .gray100
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -166,11 +147,11 @@ final class BudgetCardView: UIView {
         progress.clipsToBounds = true
         return progress
     }()
-        
-    init(/*budget: Budget? = nil*/) {
+    
+    init() {
         super.init(frame: .zero)
-        //        self.budget = budget
         setupView()
+        setupConstraints()
     }
     
     required init?(coder: NSCoder) {
@@ -193,27 +174,21 @@ final class BudgetCardView: UIView {
         addSubview(yearLabel)
         addSubview(settingsButton)
         addSubview(dividerView)
-        
         addSubview(availableLabel)
-        if budget != nil {
-            addSubview(balanceLabel)
-        } else {
-            addSubview(defineBudgetButton)
-        }
-        
+        addSubview(balanceLabel)
+        addSubview(defineBudgetButton)
         addSubview(usedLabel)
         addSubview(amountSpentLabel)
-        
         addSubview(limitLabel)
         addSubview(limitAmountLabel)
-        
         addSubview(progressBar)
         
-        setupConstraints()
+        balanceLabel.isHidden = true
+        defineBudgetButton.isHidden = true
     }
     
     private func setupConstraints() {
-        var constraints: [NSLayoutConstraint] = [
+        NSLayoutConstraint.activate([
             monthLabel.topAnchor.constraint(equalTo: topAnchor, constant: 24),
             monthLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24),
             
@@ -245,31 +220,66 @@ final class BudgetCardView: UIView {
             limitAmountLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -24),
             
             progressBar.bottomAnchor.constraint(equalTo: bottomAnchor),
-            progressBar.widthAnchor.constraint(equalTo: widthAnchor),
-            progressBar.heightAnchor.constraint(equalToConstant: (budget != nil ? 8 : 0))
+            progressBar.widthAnchor.constraint(equalTo: widthAnchor)
+        ])
+        
+        progressBarHeightConstraint = progressBar.heightAnchor.constraint(equalToConstant: 0)
+        progressBarHeightConstraint?.isActive = true
+        
+        withBudgetConstraints = [
+            balanceLabel.topAnchor.constraint(equalTo: availableLabel.bottomAnchor, constant: 4),
+            balanceLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24),
+            usedLabel.topAnchor.constraint(equalTo: balanceLabel.bottomAnchor, constant: 20)
         ]
         
-        if budget != nil {
-            constraints.append(contentsOf: [
-                balanceLabel.topAnchor.constraint(equalTo: availableLabel.bottomAnchor, constant: 4),
-                balanceLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24),
-                usedLabel.topAnchor.constraint(equalTo: balanceLabel.bottomAnchor, constant: 20)
-            ])
-        } else {
-            constraints.append(contentsOf: [
-                defineBudgetButton.topAnchor.constraint(equalTo: availableLabel.bottomAnchor, constant: 8),
-                defineBudgetButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24),
-                defineBudgetButton.widthAnchor.constraint(equalTo: widthAnchor, constant: -48),
-                defineBudgetButton.centerXAnchor.constraint(equalTo: centerXAnchor),
-                defineBudgetButton.heightAnchor.constraint(equalToConstant: 48),
-                usedLabel.topAnchor.constraint(equalTo: defineBudgetButton.bottomAnchor, constant: 20)
-            ])
-        }
-        
-        NSLayoutConstraint.activate(constraints)
+        withoutBudgetConstraints = [
+            defineBudgetButton.topAnchor.constraint(equalTo: availableLabel.bottomAnchor, constant: 8),
+            defineBudgetButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24),
+            defineBudgetButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -24),
+            defineBudgetButton.heightAnchor.constraint(equalToConstant: 48),
+            usedLabel.topAnchor.constraint(equalTo: defineBudgetButton.bottomAnchor, constant: 20)
+        ]
     }
     
-    func setupBudget() {
+    func setupBudget(budget: Budget?, for monthYear: String) {
+        self.budget = budget
+        self.date = monthYear
         
+        monthLabel.text = date.monthName
+        yearLabel.text = "/ \(date.yearNumber)"
+        
+        if let currentBudget = budget {
+            balanceLabel.text = "R$ \(currentBudget.balance.decimalFormatted)"
+            amountSpentLabel.text = "R$ \(currentBudget.amountSpent.decimalFormatted)" // Formate se precisar
+            limitAmountLabel.text = "R$ \(currentBudget.limitAmount.decimalFormatted)"
+            limitAmountLabel.font = .textSm
+            
+            progressBar.progress = Float(currentBudget.amountSpent / currentBudget.limitAmount)
+            progressBarHeightConstraint?.constant = 8
+            
+            balanceLabel.isHidden = false
+            defineBudgetButton.isHidden = true
+            
+            NSLayoutConstraint.deactivate(withoutBudgetConstraints)
+            NSLayoutConstraint.activate(withBudgetConstraints)
+            
+        } else {
+            amountSpentLabel.text = "R$ 0,00"
+            limitAmountLabel.text = "∞"
+            limitAmountLabel.font = UIFont.systemFont(ofSize: 24, weight: .regular)
+            
+            progressBar.progress = 0
+            progressBarHeightConstraint?.constant = 0
+            
+            balanceLabel.isHidden = true
+            defineBudgetButton.isHidden = false
+            
+            NSLayoutConstraint.deactivate(withBudgetConstraints)
+            NSLayoutConstraint.activate(withoutBudgetConstraints)
+        }
+        
+        UIView.animate(withDuration: 0.3) {
+            self.layoutIfNeeded()
+        }
     }
 }

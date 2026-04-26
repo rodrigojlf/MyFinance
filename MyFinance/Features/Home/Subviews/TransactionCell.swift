@@ -25,9 +25,9 @@ final class TransactionCell: UITableViewCell {
     
     private lazy var iconImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFit
         imageView.tintColor = .appMagenta
+        imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
 
@@ -150,7 +150,7 @@ final class TransactionCell: UITableViewCell {
     }
     
     func configure(with transaction: Transaction) {
-        iconImageView.image = UIImage(named: transaction.iconName)
+        iconImageView.image = UIImage(named: transaction.iconName.rawValue)
         titleLabel.text = transaction.title
         dateLabel.text = transaction.date
         amountLabel.text = transaction.amount.decimalFormatted

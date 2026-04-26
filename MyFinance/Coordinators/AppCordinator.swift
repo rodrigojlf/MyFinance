@@ -10,10 +10,12 @@ import UIKit
 class AppCoordinator: Coordinator {
     var navigationController: UINavigationController
     private let authService: AuthServiceProtocol
+    private let userManager: UserManager
     
-    init(navigationController: UINavigationController, authService: AuthServiceProtocol = AuthenticationService()) {
+    init(navigationController: UINavigationController, authService: AuthServiceProtocol = AuthenticationService(), userManager: UserManager = UserManager()) {
         self.navigationController = navigationController
         self.authService = authService
+        self.userManager = userManager
     }
     
     func start() {
@@ -34,6 +36,11 @@ class AppCoordinator: Coordinator {
     private func routeAfterSplash() {
         if authService.hasActiveSession() {
             print("Usuário logado.")
+            
+            // Mock para desenvolvimento - Apagar quando o user vier do Firebase.
+            let loggedInUser = Mock.user
+            self.userManager.currentUser = loggedInUser
+            
             showHomeScreen()
         } else {
             print("Usuário não logado.")
@@ -42,7 +49,7 @@ class AppCoordinator: Coordinator {
     }
     
     private func showLoginScreen() {
-        let viewModel = LoginViewModel(authService: authService)
+        let viewModel = LoginViewModel(authService: authService, userManager: userManager)
         let viewController = LoginViewController(viewModel: viewModel)
         
         viewModel.onLoginSuccess = { [weak self] in
@@ -53,7 +60,7 @@ class AppCoordinator: Coordinator {
     }
     
     private func showHomeScreen() {
-        let viewModel = HomeViewModel(authService: authService)
+        let viewModel = HomeViewModel(authService: authService, userManager: userManager)
         let viewController = HomeViewController(viewModel: viewModel)
         
         viewModel.onAddTransactionRequested = { [weak self] in

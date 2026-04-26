@@ -24,9 +24,11 @@ final class LoginViewModel {
     var onLoginError: ((String) -> Void)?
     
     private let authService: AuthServiceProtocol
+    private let userManager: UserManager
     
-    init(authService: AuthServiceProtocol = AuthenticationService()) {
+    init(authService: AuthServiceProtocol = AuthenticationService(), userManager: UserManager) {
         self.authService = authService
+        self.userManager = userManager
     }
     
     private func validateForm() {
@@ -51,8 +53,14 @@ final class LoginViewModel {
     func performLogin() {
         Task {
             do {
-                try await authService.login(email: emailText, password: passwordText)                
+                try await authService.login(email: emailText, password: passwordText)
+                
+                // SIMULAÇÃO: Populando o usuário após o sucesso
+                // Quando tiver o Firebase, você extrai essas infos do Firebase Auth / Firestore
+                let loggedInUser = Mock.user
+                
                 await MainActor.run {
+                    self.userManager.currentUser = loggedInUser // Virá do Firebase
                     onLoginSuccess?()
                 }
             } catch {

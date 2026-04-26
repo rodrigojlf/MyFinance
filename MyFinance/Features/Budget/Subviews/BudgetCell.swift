@@ -176,8 +176,8 @@ final class BudgetCell: UITableViewCell {
     }
     
     func configure(with budget: Budget) {
-        monthLabel.text = budget.wrappedMonth.capitalized
-        yearLabel.text = budget.wrappedYear
+        monthLabel.text = budget.monthYear.monthName?.capitalized
+        yearLabel.text = budget.monthYear.yearNumber
         amountLabel.text = budget.limitAmount.decimalFormatted
     }
     
