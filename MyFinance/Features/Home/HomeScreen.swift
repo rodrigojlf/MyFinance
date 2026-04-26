@@ -47,11 +47,12 @@ final class HomeScreen: UIView {
     
     lazy var tableView: UITableView = {
         let table = UITableView(frame: .zero, style: .grouped)
-        table.backgroundColor = .gray100
+        table.backgroundColor = .gray200
         table.separatorStyle = .none
         table.showsVerticalScrollIndicator = false
         table.layer.cornerRadius = 12
         table.register(TransactionCell.self, forCellReuseIdentifier: TransactionCell.identifier)
+        table.register(EmptyTransactionCell.self, forCellReuseIdentifier: EmptyTransactionCell.identifier)
         table.translatesAutoresizingMaskIntoConstraints = false
         return table
     }()

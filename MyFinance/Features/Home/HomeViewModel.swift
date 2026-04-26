@@ -46,7 +46,7 @@ final class HomeViewModel {
     }
     
     func loadData() {
-        
+        //aidcionar lógica para adicionar uma transaction
         self.onDataUpdated?()
     }
     
@@ -55,7 +55,9 @@ final class HomeViewModel {
     }
     
     var onSettingsRequested: (() -> Void)?
-    func didTapSettings() { onSettingsRequested?() }
+    func didTapSettings() {
+        onSettingsRequested?()
+    }
     
     private func filterDataByMonth() {
         guard let user = userManager.currentUser else {
@@ -74,5 +76,13 @@ final class HomeViewModel {
             self.currentBudget = nil
             self.filteredTransactions = []
         }
+    }
+    
+    var numberOfRowsInSection: Int {
+        filteredTransactions.isEmpty ? 1 : filteredTransactions.count
+    }
+    
+    var heightForRowAt: CGFloat {
+        filteredTransactions.count > 0 ? 72 : 64
     }
 }

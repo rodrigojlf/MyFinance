@@ -90,20 +90,27 @@ final class HomeViewController: UIViewController {
 extension HomeViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.filteredTransactions.count
+        return viewModel.numberOfRowsInSection
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: TransactionCell.identifier, for: indexPath) as? TransactionCell else {
-            return UITableViewCell()
+        if viewModel.filteredTransactions.count > 0 {
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: TransactionCell.identifier, for: indexPath) as? TransactionCell else {
+                return UITableViewCell()
+            }
+            
+            let transaction = viewModel.filteredTransactions[indexPath.row]
+            cell.configure(with: transaction)
+            return cell
+        } else {
+            guard let emptyCell = tableView.dequeueReusableCell(withIdentifier: EmptyTransactionCell.identifier, for: indexPath) as? EmptyTransactionCell else {
+                return UITableViewCell()
+            }
+            return emptyCell
         }
-        
-        let transaction = viewModel.filteredTransactions[indexPath.row]
-        cell.configure(with: transaction)
-        return cell
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 72
+        return viewModel.heightForRowAt
     }
 }

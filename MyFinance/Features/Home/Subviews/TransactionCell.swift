@@ -81,7 +81,6 @@ final class TransactionCell: UITableViewCell {
     }()
     
     @objc private func deleteAction() {
-        print("tocou no botao")
         onDeleteTapped?()
     }
     
