@@ -45,13 +45,19 @@ final class HomeViewModel {
         }
     }
     
-    func loadData() {
-        //aidcionar lógica para adicionar uma transaction
+    func refreshData() {
+        filterDataByMonth()
         self.onDataUpdated?()
     }
     
     func didTapAddTransaction() {
         onAddTransactionRequested?()
+    }
+    
+    func deleteTransaction(at index: Int) {
+        userManager.deleteTransaction(withId: filteredTransactions[index].id, fromMonthYear: currentMonthYear)
+        filterDataByMonth()
+        onDataUpdated?()
     }
     
     var onSettingsRequested: (() -> Void)?

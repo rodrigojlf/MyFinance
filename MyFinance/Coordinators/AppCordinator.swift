@@ -79,7 +79,7 @@ class AppCoordinator: Coordinator {
     }
     
     private func showBudgetSettings() {
-        let viewModel = BudgetSettingsViewModel()
+        let viewModel = BudgetSettingsViewModel(userManager: userManager)
         let viewController = BudgetSettingsViewController(viewModel: viewModel)
         
         viewModel.onBackRequested = { [weak self] in
@@ -90,8 +90,21 @@ class AppCoordinator: Coordinator {
     }
     
     private func showAddTransaction() {
-        let viewModel = AddTransactionViewModel()
+        let viewModel = AddTransactionViewModel(userManager: userManager)
         let viewController = AddTransactionViewController(viewModel: viewModel)
+        
+        viewModel.onSaveSuccess = { [weak self] success in
+            if success {
+                self?.navigationController.dismiss(animated: true) {
+                    if let home = self?.navigationController.viewControllers.first(where: { $0 is HomeViewController }) as? HomeViewController {
+                        home.reloadTableView()
+                    }
+                }
+            } else {
+                viewController.saveErrorAlert()
+            }
+        }
+        
         navigationController.present(viewController, animated: true)
     }
 }

@@ -10,30 +10,34 @@ import Foundation
 final class BudgetSettingsViewModel {
     var onDataUpdated: (() -> Void)?
     var onBackRequested: (() -> Void)?
+    var onSaveSuccess:((Bool, String?) -> Void)?
     
-    private(set) var budgets: [Budget] = []
+    private let userManager: UserManager
     
-    func loadData() {
-        budgets = [
-            Budget(id: "1", monthYear: "03/2026", limitAmount: 7000.00, transactions: []),
-            Budget(id: "2", monthYear: "04/2026", limitAmount: 8000.00, transactions: []),
-            Budget(id: "3", monthYear: "05/2026", limitAmount: 5000.00, transactions: []),
-            Budget(id: "4", monthYear: "06/2026", limitAmount: 9000.00, transactions: []),
-        ]
-        onDataUpdated?()
+    var budgets: [Budget] {
+        userManager.currentUser?.budgets ?? []
     }
     
-    func addBudget(monthYear: String?, amount: String?) {
-        guard let month = monthYear, !month.isEmpty,
-              let amountStr = amount, let value = Double(amountStr.replacingOccurrences(of: ",", with: ".")) else { return }
-        
-        let newBudget = Budget(id: UUID().uuidString, monthYear: month, limitAmount: value, transactions: [])
-        budgets.insert(newBudget, at: 0)
-        onDataUpdated?()
+    init(userManager: UserManager) {
+        self.userManager = userManager
+    }
+    
+//    func loadData() {
+//        onDataUpdated?()
+//    }
+    
+    func addBudget(monthYear: String, amount: String) {
+        if !monthYear.isEmpty && !amount.isEmpty {
+            userManager.addBudget(monthYear: monthYear, limitAmount: Double(amount) ?? 0.0)
+            onSaveSuccess?(true, nil)
+            onDataUpdated?()
+        } else {
+            onSaveSuccess?(false, "Preecha todos os campos.")
+        }
     }
     
     func removeBudget(at index: Int) {
-        budgets.remove(at: index)
+//        budgets.remove(at: index)
         onDataUpdated?()
     }
     

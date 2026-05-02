@@ -21,6 +21,23 @@ enum TransactionIcon: String, Codable {
     case briefcase
 }
 
+extension TransactionIcon {
+    var description: String {
+        switch self {
+        case .basket:
+            return "Mercado"
+        case .gift:
+            return "Presente"
+        case .note:
+            return "Contas"
+        case .home:
+            return "Casa"
+        case .briefcase:
+            return "Trabalho"
+        }
+    }
+}
+
 struct Transaction: Codable {
     let id: String
     let title: String

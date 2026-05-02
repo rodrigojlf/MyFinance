@@ -33,7 +33,6 @@ final class HomeViewController: UIViewController {
         
         setupBindings()
         setupActions()
-        viewModel.loadData()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -53,9 +52,11 @@ final class HomeViewController: UIViewController {
             self.screen.updateNumberOfTransactions(for: self.viewModel.filteredTransactions.count)
         }
         
-        viewModel.onDataUpdated = { [weak self] in
-            self?.screen.tableView.reloadData()
-            self?.screen.updateNumberOfTransactions(for: self?.viewModel.filteredTransactions.count ?? 0)
+        viewModel.onDataUpdated = { [unowned self] in
+            self.screen.tableView.reloadData()
+            self.screen.updateNumberOfTransactions(for: self.viewModel.filteredTransactions.count)
+            self.screen.budgetCard.setupBudget(budget: self.viewModel.currentBudget,
+                                               for: self.viewModel.currentMonthYear)
         }
         
         viewModel.onLogoutFailure = { [weak self] errorMessage in
@@ -78,12 +79,16 @@ final class HomeViewController: UIViewController {
     }
     
     private func initialSetup() {
-        screen.headerView.setupHeaderData(name: viewModel.user?.name ?? "erro", data: nil)
+        screen.headerView.setupHeaderData(name: viewModel.user?.name ?? "Unknown", data: nil)
         screen.tableView.reloadData()
         screen.budgetCard.setupBudget(
             budget: viewModel.currentBudget,
             for: viewModel.currentMonthYear
         )
+    }
+    
+    func reloadTableView() {
+        viewModel.refreshData()
     }
 }
 
@@ -101,6 +106,9 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate {
             
             let transaction = viewModel.filteredTransactions[indexPath.row]
             cell.configure(with: transaction)
+            cell.onDeleteTapped = { [weak self] in
+                self?.viewModel.deleteTransaction(at: indexPath.row)
+            }
             return cell
         } else {
             guard let emptyCell = tableView.dequeueReusableCell(withIdentifier: EmptyTransactionCell.identifier, for: indexPath) as? EmptyTransactionCell else {

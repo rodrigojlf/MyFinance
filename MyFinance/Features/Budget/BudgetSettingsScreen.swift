@@ -1,5 +1,5 @@
 //
-//  BudgetSettingsView.swift
+//  BudgetSettingsScreen.swift
 //  MyFinance
 //
 //  Created by Rodrigo Lima on 02/04/26.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class BudgetSettingsView: UIView {
+final class BudgetSettingsScreen: UIView {
     
     lazy var header = BudgetHeaderView()
     

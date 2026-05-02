@@ -29,6 +29,7 @@ final class AddTransactionViewController: UIViewController {
         super.viewDidLoad()
         setupSheet()
         screen.delegate(delegate: self)
+        screen.categoryTextField.delegate = self
         screen.amountTextField.delegate = self
         screen.dateTextField.delegate = self
     }
@@ -39,6 +40,10 @@ final class AddTransactionViewController: UIViewController {
             sheet.prefersGrabberVisible = false
         }
     }
+    
+    func saveErrorAlert() {
+        AlertManager.showAlert(on: self, title: "Erro ao salvar", message: "Não existe orçamento cadastrado para a data especificada.")
+    }
 }
 
 extension AddTransactionViewController: AddTransactionScreenProtocol {
@@ -47,45 +52,39 @@ extension AddTransactionViewController: AddTransactionScreenProtocol {
     }
     
     func addTransaction() {
-        viewModel.saveTransaction(title: screen.getTitle(), // Tratar opcionais na ViewModel
+        viewModel.saveTransaction(title: screen.getTitle(),
+                                  category: screen.getCategory(),
                                   date: screen.getDate(),
                                   amount: screen.getAmount(),
                                   type: screen.getTransactionType())
     }
-    
-    
 }
 
 extension AddTransactionViewController: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-            
-            let currentText = textField.text ?? ""
-            
-            // Verifica se é o comportamento de apagar tudo de uma vez (ex: select all + backspace)
-            guard let stringRange = Range(range, in: currentText) else { return false }
-            
-            // Cria a nova string simulando o que aconteceria após o usuário digitar
-            let updatedText = currentText.replacingCharacters(in: stringRange, with: string)
-            
-            // Se o usuário apagou tudo, deixamos o campo vazio
-            if updatedText.isEmpty {
-                textField.text = ""
-                return false
-            }
-            
-            // --- APLICAÇÃO DAS MÁSCARAS ---
-            
-            // Verifique qual textField está sendo editado para aplicar a máscara correta
-        if textField == screen.amountTextField {
-                textField.text = updatedText.currencyFormatting()
-                return false // Retornamos false para que o iOS não coloque o texto "cru", nós já colocamos o texto formatado acima.
-                
-        } else if textField == screen.dateTextField {
-                textField.text = updatedText.dateFormatting()
-                return false
-            }
-            
-            // Para qualquer outro textField que não tenha máscara, permite a digitação normal
-            return true
+        
+        if textField == screen.categoryTextField || textField == screen.dateTextField {
+            return false // Bloqueia qualquer caractere digitado ou colado
         }
+        
+        let currentText = textField.text ?? ""
+        guard let stringRange = Range(range, in: currentText) else { return false }
+        let updatedText = currentText.replacingCharacters(in: stringRange, with: string)
+        
+        if updatedText.isEmpty {
+            textField.text = ""
+            return false
+        }
+        
+        if textField == screen.amountTextField {
+            textField.text = updatedText.currencyFormatting()
+            return false
+            
+        } else if textField == screen.dateTextField {
+            textField.text = updatedText.dateFormatting()
+            return false
+        }
+        
+        return true
+    }
 }

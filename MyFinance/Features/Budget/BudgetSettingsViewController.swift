@@ -10,7 +10,7 @@ import UIKit
 final class BudgetSettingsViewController: UIViewController {
     
     private let viewModel: BudgetSettingsViewModel
-    private let screen = BudgetSettingsView()
+    private let screen = BudgetSettingsScreen()
     
     init(viewModel: BudgetSettingsViewModel) {
         self.viewModel = viewModel
@@ -26,7 +26,8 @@ final class BudgetSettingsViewController: UIViewController {
         setupTableView()
         setupBindings()
         setupActions()
-        viewModel.loadData()
+//        viewModel.loadData()
+        screen.newBudgetSection.dateTextField.delegate = self
     }
     
     private func setupTableView() {
@@ -38,6 +39,12 @@ final class BudgetSettingsViewController: UIViewController {
         viewModel.onDataUpdated = { [weak self] in
             self?.screen.budgetListView.tableView.reloadData()
         }
+        viewModel.onSaveSuccess = { [weak self] (result, message) in
+            if result == false {
+                guard let message else { return }
+                AlertManager.showAlert(on: self, title: "Erro", message: message)
+            }
+        }
     }
     
     private func setupActions() {
@@ -45,8 +52,8 @@ final class BudgetSettingsViewController: UIViewController {
             self?.viewModel.goBack()
         }
         screen.newBudgetSection.saveAction = { [weak self] in
-            self?.viewModel.addBudget(monthYear: self?.screen.newBudgetSection.dateTextField.text,
-                                      amount: self?.screen.newBudgetSection.amountTextField.text)
+            self?.viewModel.addBudget(monthYear: self?.screen.newBudgetSection.dateTextField.text ?? "",
+                                      amount: self?.screen.newBudgetSection.amountTextField.text ?? "")
             self?.screen.newBudgetSection.dateTextField.text = ""
             self?.screen.newBudgetSection.amountTextField.text = ""
             self?.view.endEditing(true)
@@ -83,5 +90,14 @@ extension BudgetSettingsViewController: UITableViewDataSource, UITableViewDelega
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 60
+    }
+}
+
+extension BudgetSettingsViewController: UITextFieldDelegate {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        if textField == screen.newBudgetSection.dateTextField {
+            return false
+        }
+        return true
     }
 }

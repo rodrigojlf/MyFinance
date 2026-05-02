@@ -14,7 +14,9 @@ protocol AddTransactionScreenProtocol: AnyObject {
 
 final class AddTransactionScreen: UIView {
     
-    var transactionType: TransactionType?
+    private var transactionType: TransactionType?
+    private var selectedCategoryIcon: TransactionIcon?
+    private let categoryIcons: [TransactionIcon] = [.basket, .gift, .note, .home, .briefcase]
     
     private weak var delegate: AddTransactionScreenProtocol?
     
@@ -62,7 +64,35 @@ final class AddTransactionScreen: UIView {
         return img
     }()
     
-    private lazy var categoryTextField: CustomTextField = CustomTextField(placeholder: "Categoria", icon: priceTagIcon)
+    private lazy var categoryPicker: UIPickerView = {
+        let picker = UIPickerView()
+        picker.delegate = self
+        picker.dataSource = self
+        return picker
+    }()
+    
+    private lazy var pickerToolbar: UIToolbar = {
+        let toolbar = UIToolbar()
+        toolbar.sizeToFit()
+        let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        let doneBtn = UIBarButtonItem(title: "OK", style: .done, target: self, action: #selector(dismissPicker))
+        toolbar.setItems([flexSpace, doneBtn], animated: false)
+        return toolbar
+    }()
+    
+    @objc private func dismissPicker() {
+        endEditing(true)
+    }
+    
+    lazy var categoryTextField: CustomTextField = {
+        let tf = CustomTextField(placeholder: "Categoria", icon: priceTagIcon)
+        tf.inputView = categoryPicker
+        tf.inputAccessoryView = pickerToolbar
+        tf.tintColor = .clear
+        tf.spellCheckingType = .no
+        tf.autocorrectionType = .no
+        return tf
+    }()
     
     private lazy var horizontalStackView: UIStackView = {
         let stackView = UIStackView()
@@ -82,14 +112,44 @@ final class AddTransactionScreen: UIView {
         return tf
     }()
     
+    private lazy var datePicker: UIDatePicker = {
+        let picker = UIDatePicker()
+        picker.datePickerMode = .date
+        picker.locale = Locale(identifier: "pt_BR")
+        picker.preferredDatePickerStyle = .wheels
+        picker.addTarget(self, action: #selector(dateChanged), for: .valueChanged)
+        return picker
+    }()
+    
+    private lazy var datePickerToolbar: UIToolbar = {
+        let toolbar = UIToolbar()
+        toolbar.sizeToFit()
+        let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        let doneBtn = UIBarButtonItem(title: "OK", style: .done, target: self, action: #selector(dismissDatePicker))
+        toolbar.setItems([flexSpace, doneBtn], animated: false)
+        return toolbar
+    }()
+    
+    @objc private func dateChanged() {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd/MM/yyyy"
+        dateTextField.text = formatter.string(from: datePicker.date)
+    }
+    
+    @objc private func dismissDatePicker() {
+        dateChanged()
+        endEditing(true)
+    }
+    
     private lazy var calendarIcon = CustomIconImageView(symbol: "calendar")
     
     lazy var dateTextField: CustomTextField = {
-        let tf = CustomTextField(placeholder: "dd/MM/yyyy", icon: calendarIcon)
-        tf.keyboardType = .numberPad
-        tf.addTarget(self, action: #selector(validateDateTextField), for: .editingDidEnd)
-        tf.addTarget(self, action: #selector(clearDateError), for: .editingChanged)
-        
+        let tf = CustomTextField(placeholder: "00/00/0000", icon: calendarIcon)
+        tf.inputView = datePicker
+        tf.inputAccessoryView = datePickerToolbar
+        tf.tintColor = .clear
+        tf.spellCheckingType = .no
+        tf.autocorrectionType = .no
         return tf
     }()
     
@@ -300,8 +360,8 @@ final class AddTransactionScreen: UIView {
         return transactionTextField.text
     }
     
-    func getCategory() -> String? {
-        return categoryTextField.text
+    func getCategory() -> TransactionIcon? {
+        return selectedCategoryIcon
     }
     
     func getAmount() -> String? {
@@ -314,5 +374,25 @@ final class AddTransactionScreen: UIView {
     
     func getTransactionType() -> TransactionType? {
         return transactionType
+    }
+}
+
+extension AddTransactionScreen: UIPickerViewDelegate, UIPickerViewDataSource {
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return categoryIcons.count
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return categoryIcons[row].description
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        let selectedIcon = categoryIcons[row]
+        categoryTextField.text = selectedIcon.description
+        self.selectedCategoryIcon = selectedIcon
     }
 }
